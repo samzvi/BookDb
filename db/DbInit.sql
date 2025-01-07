@@ -1,5 +1,4 @@
--- Create the database
-CREATE DATABASE 'C:\\Users\\zvirecis\\Documents\\Visual Studio 2022\\Projects\\BookDb\\db\\BOOKSDB.fdb'
+CREATE DATABASE "D:\\fbdata\\BOOKSDB.fdb"
 USER 'SYSDBA' PASSWORD 'masterkey'
 DEFAULT CHARACTER SET UTF8;
 

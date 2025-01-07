@@ -69,11 +69,6 @@ namespace BookDb
                         }
                         AuthorComboBox.ItemsSource = authorsDictionary.ToList();
                     }
-                    foreach (var author in authorsDictionary.ToList())
-                    {
-                        System.Diagnostics.Debug.WriteLine($"{author.Key}: {author.Value}");
-                    }
-                    AuthorComboBox.ItemsSource = authorsDictionary.ToList();
                 }
             }
             catch (Exception ex)

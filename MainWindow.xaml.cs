@@ -1,25 +1,13 @@
 ﻿using System.Data;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using FirebirdSql.Data.FirebirdClient;
 
 
 namespace BookDb
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly string connectionString = "User=SYSDBA;Password=masterkey;Database=C:\\Users\\zvirecis\\Documents\\Visual Studio 2022\\Projects\\BookDb\\db\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
+        private readonly string connectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
         public MainWindow()
         {
             InitializeComponent();
@@ -90,7 +78,7 @@ namespace BookDb
             }
             else
             {
-                MessageBox.Show("Please select a book to view details.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show("Vyber knihu pro zobrazeni informaci.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

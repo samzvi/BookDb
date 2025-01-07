@@ -7,24 +7,18 @@
         mc:Ignorable="d"
         Title="Databáze knih" Height="476" Width="1200">
     <Grid>
-        <!-- Define rows for layout -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- For the label -->
             <RowDefinition Height="*"/>
-            <!-- For the DataGrid -->
             <RowDefinition Height="Auto"/>
-            <!-- For the buttons -->
         </Grid.RowDefinitions>
 
-        <!-- Label at the top -->
         <Label Content="Knihy" Margin="10" VerticalAlignment="Top" 
                HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Grid.Row="0"/>
 
-        <!-- DataGrid for displaying books -->
         <DataGrid x:Name="BooksDataGrid" Grid.Row="1" CanUserResizeRows="False" AutoGenerateColumns="False" CanUserAddRows="False" Margin="10" IsReadOnly="True" Background="{x:Null}">
             <DataGrid.Resources>
-                <!-- Reusable Style for Center Alignment -->
+
                 <Style x:Key="CenteredTextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="Padding" Value="2" />
@@ -45,7 +39,7 @@
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black"/>
                     <GradientStop Color="White" Offset="1"/>
-                    <GradientStop Color="#FF3D3D3D" Offset="0.642"/>
+                    <GradientStop Color="#FF3D3D3D" Offset="0.75"/>
                 </LinearGradientBrush>
             </DataGrid.BorderBrush>
             <DataGrid.Columns>
@@ -58,7 +52,7 @@
                 <DataGridTemplateColumn Header="Akce" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Podrobnosti" Click="ShowDetailsButton_Click" Tag="{Binding Id}" />
+                            <Button Content="Podrobnosti" Click="ShowDetailsButton_Click" Tag="{Binding BOOK_ID}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -66,7 +60,6 @@
         </DataGrid>
 
 
-        <!-- Buttons at the bottom -->
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 0, 0, 10">
             <Button Content="Přidat knížku" Width="100" Margin="10" Click="AddBookButton_Click" />
             <Button Content="Vytvořit autora" Width="100" Margin="10" Click="CreateAuthorButton_Click" />
