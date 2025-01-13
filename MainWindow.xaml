@@ -15,7 +15,7 @@
         <!-- DataGrid for displaying books -->
         <DataGrid Name="BooksDataGrid" Background="{x:Null}" Grid.Row="1" AutoGenerateColumns="False" Margin="5" IsReadOnly="True" SelectionMode="Single">
             <DataGrid.Resources>
-                <Style x:Key="CenteredTextBlockStyle" TargetType="TextBlock">
+                <Style x:Key="TextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="Padding" Value="2" />
                 </Style>
@@ -38,15 +38,15 @@
                 </LinearGradientBrush>
             </DataGrid.BorderBrush>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Název" Binding="{Binding TITLE}" Width="200" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Autor" Binding="{Binding AUTHOR_NAME}" Width="150" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Vydavatel" Binding="{Binding PUBLISHER_NAME}" Width="150" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Datum pořízení" Binding="{Binding ACQUIREMENT_DATE, StringFormat='d'}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding ON_PAGE_TOTAL}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TIMES_READ}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Hodnocení" Binding="{Binding RATING}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Klíčová slova" Binding="{Binding KEYWORDS}" Width="200" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Popis" Binding="{Binding DESCRIPTION}" Width="*" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Název" Binding="{Binding TITLE}" Width="200" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Autor" Binding="{Binding AUTHOR_NAME}" Width="150" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Vydavatel" Binding="{Binding PUBLISHER_NAME}" Width="150" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Datum pořízení" Binding="{Binding ACQUIREMENT_DATE, StringFormat='d'}" Width="100" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding ON_PAGE_TOTAL}" Width="100" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TIMES_READ}" Width="100" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Hodnocení" Binding="{Binding RATING}" Width="100" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Klíčová slova" Binding="{Binding KEYWORDS}" Width="200" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Popis" Binding="{Binding DESCRIPTION}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTemplateColumn Header="Akce" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

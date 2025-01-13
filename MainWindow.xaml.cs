@@ -53,7 +53,7 @@ namespace BookDb
             }
             catch (Exception ex)
             {
-                MessageBoxResult result = MessageBox.Show("Chyba při připojování k databázi, chcete opakovat pokus?", "CHYBA", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show($" Chyba při připojování k databázi, chcete opakovat pokus?\n Error: {ex.Message}", "CHYBA", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
                 if (result == MessageBoxResult.Yes)
                 {
                     LoadBooks();
