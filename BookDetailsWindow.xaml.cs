@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Windows;
 using FirebirdSql.Data.FirebirdClient;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BookDb
 {
@@ -27,15 +29,17 @@ namespace BookDb
                     string query = @"SELECT 
                                         b.title, 
                                         b.author_id, 
-                                        b.release_date, 
-                                        b.pages, 
-                                        p.name AS publisher, 
+                                        b.total_pages, 
+                                        b.on_page,
+                                        b.times_read,
+                                        b.rating,
+                                        b.acquirement_date,
+                                        b.publisher_id,
                                         b.keywords, 
-                                        b.description 
+                                        b.description, 
+                                        b.notes
                                     FROM 
                                         Book b
-                                    JOIN 
-                                        Publisher p ON b.publisher_id = p.id
                                     WHERE 
                                         b.id = @Id";
                     FbCommand bookCommand = new FbCommand(query, connection);
@@ -47,28 +51,20 @@ namespace BookDb
                         {
                             TitleTextBox.Text = reader["title"].ToString();
                             AuthorComboBox.SelectedValue = reader["author_id"];
-                            ReleaseDateTextBox.Text = reader["release_date"].ToString();
-                            PagesTextBox.Text = reader["pages"].ToString();
-                            PublisherTextBox.Text = reader["publisher"].ToString();
+                            AcquirementDateTextBox.Text = reader["acquirement_date"].ToString();
+                            OnPageTextBox.Text = reader["on_page"].ToString();
+                            TotalPagesTextBox.Text = reader["total_pages"].ToString();
+                            TimesReadTextBox.Text = reader["times_read"].ToString();
+                            RatingTextBox.Text = reader["rating"].ToString();
+                            PublisherComboBox.SelectedValue = reader["publisher_id"];
                             KeywordsTextBox.Text = reader["keywords"].ToString();
                             DescriptionTextBox.Text = reader["description"].ToString();
+                            NotesTextBox.Text = reader["notes"].ToString();
                         }
                     }
-                    // Load authors
-                    string authorsQuery = "SELECT id, name || ' ' || surname AS full_name FROM Author";
-                    FbCommand authorsCommand = new FbCommand(authorsQuery, connection);
 
-                    var authorsDictionary = new Dictionary<int, string>();
-                    using (var authorsReader = authorsCommand.ExecuteReader())
-                    {
-                        while (authorsReader.Read())
-                        {
-                            int authorId = authorsReader.GetInt32(0);
-                            string fullName = authorsReader.GetString(1);
-                            authorsDictionary[authorId] = fullName;
-                        }
-                        AuthorComboBox.ItemsSource = authorsDictionary.ToList();
-                    }
+                    LoadComboBoxData(connection, AuthorComboBox, "SELECT id, name || ' ' || surname AS full_name FROM Author");
+                    LoadComboBoxData(connection, PublisherComboBox, "SELECT id, name FROM Publisher");
                 }
             }
             catch (Exception ex)
@@ -76,6 +72,24 @@ namespace BookDb
                 MessageBox.Show($"Chyba při načítání údajů o knize: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
             }
+        }
+
+        private void LoadComboBoxData(FbConnection connection, System.Windows.Controls.ComboBox comboBox, string query)
+        {
+            var dictionary = new Dictionary<int, string>();
+            using (var command = new FbCommand(query, connection))
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    int id = reader.GetInt32(0);
+                    string name = reader.GetString(1);
+                    dictionary[id] = name;
+                }
+            }
+            comboBox.ItemsSource = dictionary.ToList();
+            comboBox.DisplayMemberPath = "Value";
+            comboBox.SelectedValuePath = "Key";
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -89,20 +103,30 @@ namespace BookDb
                                     SET 
                                         title = @Title,
                                         author_id = @Author_Id,
-                                        release_date = @Release_Date, 
-                                        pages = @Pages, 
+                                        total_pages = @Total_Pages, 
+                                        on_page = @OnPage,
+                                        times_read = @TimesRead,
+                                        rating = @Rating,
+                                        acquirement_date = @AcquirementDate,
+                                        publisher_id = @Publisher_Id,
                                         keywords = @Keywords, 
-                                        description = @Description
+                                        description = @Description,
+                                        notes = @Notes
                                     WHERE 
                                         id = @Id";
 
                     FbCommand command = new FbCommand(query, connection);
                     command.Parameters.AddWithValue("@Title", TitleTextBox.Text);
                     command.Parameters.AddWithValue("@Author_Id", AuthorComboBox.SelectedValue);
-                    command.Parameters.AddWithValue("@Release_Date", ReleaseDateTextBox.Text);
-                    command.Parameters.AddWithValue("@Pages", PagesTextBox.Text);
+                    command.Parameters.AddWithValue("@Total_Pages", TotalPagesTextBox.Text);
+                    command.Parameters.AddWithValue("@OnPage", OnPageTextBox.Text);
+                    command.Parameters.AddWithValue("@TimesRead", TimesReadTextBox.Text);
+                    command.Parameters.AddWithValue("@Rating", RatingTextBox.Text);
+                    command.Parameters.AddWithValue("@AcquirementDate", AcquirementDateTextBox.Text);
+                    command.Parameters.AddWithValue("@Publisher_Id", PublisherComboBox.SelectedValue);
                     command.Parameters.AddWithValue("@Keywords", KeywordsTextBox.Text);
                     command.Parameters.AddWithValue("@Description", DescriptionTextBox.Text);
+                    command.Parameters.AddWithValue("@Notes", NotesTextBox.Text);
                     command.Parameters.AddWithValue("@Id", _bookId);
 
                     command.ExecuteNonQuery();
