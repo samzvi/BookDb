@@ -1,24 +1,20 @@
 ﻿<Window x:Class="BookDb.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:BookDb"
-        mc:Ignorable="d"
-        Title="Databáze knih" Height="476" Width="1200">
+        Title="Book Database" Height="450" Width="1600">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Content="Knihy" Margin="10" VerticalAlignment="Top" 
-               HorizontalAlignment="Center" FontWeight="Bold" FontSize="20" Grid.Row="0"/>
+        <!-- Label at the top -->
+        <Label Content="Moje Knihovna" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10" />
 
-        <DataGrid x:Name="BooksDataGrid" Grid.Row="1" CanUserResizeRows="False" AutoGenerateColumns="False" CanUserAddRows="False" Margin="10" IsReadOnly="True" Background="{x:Null}">
+        <!-- DataGrid for displaying books -->
+        <DataGrid Name="BooksDataGrid" Background="{x:Null}" Grid.Row="1" AutoGenerateColumns="False" Margin="5" IsReadOnly="True" SelectionMode="Single">
             <DataGrid.Resources>
-
                 <Style x:Key="CenteredTextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="Padding" Value="2" />
@@ -33,7 +29,6 @@
                         </Trigger>
                     </Style.Triggers>
                 </Style>
-
             </DataGrid.Resources>
             <DataGrid.BorderBrush>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
@@ -43,26 +38,29 @@
                 </LinearGradientBrush>
             </DataGrid.BorderBrush>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Název" Binding="{Binding TITLE}" Width="150" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Název" Binding="{Binding TITLE}" Width="200" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
                 <DataGridTextColumn Header="Autor" Binding="{Binding AUTHOR_NAME}" Width="150" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Datum vydání" Binding="{Binding RELEASE_DATE, StringFormat=d}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
                 <DataGridTextColumn Header="Vydavatel" Binding="{Binding PUBLISHER_NAME}" Width="150" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTextColumn Header="Klíčová slova" Binding="{Binding KEYWORDS}" Width="150" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Datum pořízení" Binding="{Binding ACQUIREMENT_DATE, StringFormat='d'}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding ON_PAGE_TOTAL}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TIMES_READ}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Hodnocení" Binding="{Binding RATING}" Width="100" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
+                <DataGridTextColumn Header="Klíčová slova" Binding="{Binding KEYWORDS}" Width="200" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
                 <DataGridTextColumn Header="Popis" Binding="{Binding DESCRIPTION}" Width="*" ElementStyle="{StaticResource CenteredTextBlockStyle}" />
-                <DataGridTemplateColumn Header="Akce" Width="100">
+                <DataGridTemplateColumn Header="Akce" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Podrobnosti" Click="ShowDetailsButton_Click" Tag="{Binding BOOK_ID}" />
+                            <Button Content="Upravit" Click="ShowDetailsButton_Click" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0, 0, 0, 10">
-            <Button Content="Přidat knížku" Width="100" Margin="10" Click="AddBookButton_Click" />
-            <Button Content="Vytvořit autora" Width="100" Margin="10" Click="CreateAuthorButton_Click" />
+        <!-- Controls at the bottom -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Height="40" Margin="5">
+            <Button Name="AddBookButton" Content="Přidat knihu" Width="150" Margin="5" Click="AddBookButton_Click" />
+            <Button Name="CreateAuthorButton" Content="Přidat autora" Width="150" Margin="5" Click="CreateAuthorButton_Click" />
         </StackPanel>
     </Grid>
 </Window>

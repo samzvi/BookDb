@@ -1,7 +1,7 @@
 @echo off
 SET DB_PATH="D:\fbdata\BOOKSDB.fdb"
-SET SQL_FILE="C:\Users\zvirecis\Documents\Visual Studio 2022\Projects\BookDb\db\DbInit.sql"
-SET FIREBIRD_BIN="C:\Program Files (x86)\Firebird\Firebird_5_0"
+SET SQL_FILE="%~dp0DbInit.sql"
+SET FIREBIRD_BIN="C:\fb"
 SET USERNAME=SYSDBA
 SET PASSWORD=masterkey
 
