@@ -51,7 +51,9 @@ namespace BookDb
                         {
                             TitleTextBox.Text = reader["title"].ToString();
                             AuthorComboBox.SelectedValue = reader["author_id"];
-                            AcquirementDateTextBox.Text = reader["acquirement_date"].ToString();
+                            AcquirementDatePicker.SelectedDate = reader["acquirement_date"] != DBNull.Value
+                                ? Convert.ToDateTime(reader["acquirement_date"])
+                                : (DateTime?)null;
                             OnPageTextBox.Text = reader["on_page"].ToString();
                             TotalPagesTextBox.Text = reader["total_pages"].ToString();
                             TimesReadTextBox.Text = reader["times_read"].ToString();
@@ -69,7 +71,7 @@ namespace BookDb
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Chyba při načítání údajů o knize: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($" Chyba při načítání údajů o knize:\n Error: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
                 this.Close();
             }
         }
@@ -107,7 +109,7 @@ namespace BookDb
                                         on_page = @OnPage,
                                         times_read = @TimesRead,
                                         rating = @Rating,
-                                        acquirement_date = @AcquirementDate,
+                                        acquirement_date = @Acquirement_Date,
                                         publisher_id = @Publisher_Id,
                                         keywords = @Keywords, 
                                         description = @Description,
@@ -122,7 +124,9 @@ namespace BookDb
                     command.Parameters.AddWithValue("@OnPage", OnPageTextBox.Text);
                     command.Parameters.AddWithValue("@TimesRead", TimesReadTextBox.Text);
                     command.Parameters.AddWithValue("@Rating", RatingTextBox.Text);
-                    command.Parameters.AddWithValue("@AcquirementDate", AcquirementDateTextBox.Text);
+                    command.Parameters.AddWithValue("@Acquirement_Date",
+                        AcquirementDatePicker.SelectedDate.HasValue ? AcquirementDatePicker.SelectedDate.Value : DBNull.Value);
+
                     command.Parameters.AddWithValue("@Publisher_Id", PublisherComboBox.SelectedValue);
                     command.Parameters.AddWithValue("@Keywords", KeywordsTextBox.Text);
                     command.Parameters.AddWithValue("@Description", DescriptionTextBox.Text);
@@ -132,20 +136,20 @@ namespace BookDb
                     command.ExecuteNonQuery();
                 }
 
-                MessageBox.Show("Údaje o knize byly úspěšně uloženy.", "Úspěch", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(" Úspěšně uloženo!", "Úspěch", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 DialogResult = true;
-                this.Close();
+                Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Chyba při ukládání údajů o knize: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($" Chyba při ukládání:\n Error: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }
