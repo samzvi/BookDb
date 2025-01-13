@@ -55,7 +55,7 @@ namespace BookDb
                         }
                     }
                     // Load authors
-                    string authorsQuery = "SELECT id, name || ' ' || surname AS FULL_NAME FROM Author";
+                    string authorsQuery = "SELECT id, name || ' ' || surname AS full_name FROM Author";
                     FbCommand authorsCommand = new FbCommand(authorsQuery, connection);
 
                     var authorsDictionary = new Dictionary<int, string>();

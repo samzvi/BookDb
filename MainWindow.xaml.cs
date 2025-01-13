@@ -24,14 +24,18 @@ namespace BookDb
                     connection.Open();
 
                     string query = @"SELECT 
-                                        b.id AS Book_Id,
-                                        b.title AS Title,
-                                        a.name || ' ' || a.surname AS Author_Name,
-                                        b.release_date AS Release_Date,
-                                        b.pages AS Pages,
-                                        p.name AS Publisher_Name,
-                                        b.keywords AS Keywords,
-                                        b.description AS Description
+                                        b.id AS book_id,
+                                        b.title,
+                                        a.name || ' ' || a.surname AS author_name,
+                                        p.name AS publisher_name,
+                                        b.acquirement_date,
+                                        b.total_pages,
+                                        b.on_page,
+                                        b.times_read,
+                                        b.rating,
+                                        b.keywords,
+                                        b.description,
+                                        b.on_page || ' z ' || b.total_pages AS ON_PAGE_TOTAL
                                     FROM 
                                         Book b
                                     JOIN 
@@ -49,7 +53,15 @@ namespace BookDb
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Chyba při načítání knih: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show("Chyba při připojování k databázi, chcete opakovat pokus?", "CHYBA", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
+                if (result == MessageBoxResult.Yes)
+                {
+                    LoadBooks();
+                }
+                else if (result == MessageBoxResult.Cancel)
+                {
+                    Application.Current.Shutdown();
+                }
             }
         }
 
