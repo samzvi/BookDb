@@ -32,7 +32,7 @@ namespace BookDb
                                         b.total_pages,
                                         b.on_page,
                                         b.times_read,
-                                        b.rating,
+                                        b.rating || ' z ' || 10 as RATING,
                                         b.keywords,
                                         b.description,
                                         b.on_page || ' z ' || b.total_pages AS ON_PAGE_TOTAL
@@ -53,7 +53,7 @@ namespace BookDb
             }
             catch (Exception ex)
             {
-                MessageBoxResult result = MessageBox.Show($" Chyba při připojování k databázi, chcete opakovat pokus?\n Error: {ex.Message}", "CHYBA", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show($" Chyba při připojování k databázi, chcete opakovat pokus?\n Error: {ex.Message}", "Chyba", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
                 if (result == MessageBoxResult.Yes)
                 {
                     LoadBooks();
@@ -68,7 +68,13 @@ namespace BookDb
 
         private void AddBookButton_Click(object sender, RoutedEventArgs e)
         {
+            var addBookWindow = new AddBookWindow(connectionString);
+            bool? dialogResult = addBookWindow.ShowDialog();
 
+            if (dialogResult == true)
+            {
+                LoadBooks();
+            }
         }
 
         private void CreateAuthorButton_Click(object sender, RoutedEventArgs e)
