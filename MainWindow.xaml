@@ -9,10 +9,8 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Label at the top -->
         <Label Content="Moje Knihovna" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10" />
 
-        <!-- DataGrid for displaying books -->
         <DataGrid Name="BooksDataGrid" Background="{x:Null}" Grid.Row="1" AutoGenerateColumns="False" Margin="5" IsReadOnly="True" SelectionMode="Single">
             <DataGrid.Resources>
                 <Style x:Key="TextBlockStyle" TargetType="TextBlock">
@@ -23,6 +21,7 @@
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="TextAlignment" Value="Center" />
                 </Style>
+
 
                 <Style TargetType="DataGridCell">
                     <Style.Triggers>
@@ -49,8 +48,23 @@
                 <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding ON_PAGE_TOTAL}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
                 <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TOTAL_READS}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
                 <DataGridTextColumn Header="Hodnocení" Binding="{Binding RATING}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
+                <DataGridTextColumn Header="Čtu?" Width="45">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="{Binding READING_STATE_COLOR}" />
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
+                <DataGridTextColumn Header="Mám?" Width="45">
+                    <DataGridTextColumn.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Background" Value="{Binding OWNERSHIP_STATE_COLOR}" />
+                        </Style>
+                    </DataGridTextColumn.CellStyle>
+                </DataGridTextColumn>
                 <DataGridTextColumn Header="Klíčová slova" Binding="{Binding KEYWORDS}" Width="200" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Popis" Binding="{Binding DESCRIPTION}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Poznámky" Binding="{Binding NOTES}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTemplateColumn Header="Akce" Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -61,7 +75,6 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Controls at the bottom -->
         <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Height="40" Margin="5">
             <Button Name="AddBookButton" Content="Přidat knihu" Width="150" Margin="5" Click="AddBookButton_Click" />
             <Button Name="CreateAuthorButton" Content="Přidat autora" Width="150" Margin="5" Click="CreateAuthorButton_Click" />

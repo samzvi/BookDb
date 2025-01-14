@@ -45,7 +45,7 @@ CREATE TABLE Book (
 -- Insert predefined states
 INSERT INTO State (name, color) VALUES ('Vlastním', '#008000');		-- Green
 INSERT INTO State (name, color) VALUES ('Nevlastním', '#FF0000');	-- Red
-INSERT INTO State (name, color) VALUES ('Čtu', '#0000FF');		-- Blue
+INSERT INTO State (name, color) VALUES ('Čtu', '#008000');		-- Green
 INSERT INTO State (name, color) VALUES ('Nečtu', '#808080');		-- Gray
 INSERT INTO State (name, color) VALUES ('Půjčeno', '#FFFF00');		-- Yellow
 
