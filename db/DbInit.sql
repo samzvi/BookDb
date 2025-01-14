@@ -36,8 +36,8 @@ CREATE TABLE Book (
     rating INTEGER CHECK (rating BETWEEN 0 AND 10),
     author_id INTEGER NOT NULL,
     publisher_id INTEGER NOT NULL,
-    state_id INTEGER,
-    FOREIGN KEY (state_id) REFERENCES State (id) ON DELETE SET NULL,
+    reading_state INTEGER REFERENCES State (id) ON DELETE SET NULL,
+    ownership_state INTEGER REFERENCES State (id) ON DELETE SET NULL,
     FOREIGN KEY (author_id) REFERENCES Author (id) ON DELETE CASCADE,
     FOREIGN KEY (publisher_id) REFERENCES Publisher (id) ON DELETE CASCADE
 );
@@ -60,12 +60,12 @@ INSERT INTO Author (name, surname) VALUES ('Božena', 'Němcová');
 INSERT INTO Author (name, surname) VALUES ('Franz', 'Kafka');
 
 -- Insert default books
-INSERT INTO Book (title, acquirement_date, total_pages, on_page, times_read, notes, description, keywords, rating, author_id, publisher_id, state_id)
-VALUES ('R.U.R.', '2025-01-01', 96, 0, 0, 'Moc se na tuto knížku těším.', 'Drama o robotech a lidech.', 'sci-fi, roboti, drama', 8, 1, 1, 1);
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('R.U.R.', '2025-01-01', 96, 0, 0, 'Moc se na tuto knížku těším.', 'Drama o robotech a lidech.', 'sci-fi, roboti, drama', 8, 1, 1, 4, 5);
 
-INSERT INTO Book (title, acquirement_date, total_pages, on_page, times_read, notes, description, keywords, rating, author_id, publisher_id, state_id)
-VALUES ('Babička', '2025-01-02', 243, 50, 1, 'Nádherná pasáž o přírodě a vztazích.', 'Klasický román české literatury.', 'rodina, příroda, venkov', 9, 2, 2, 2);
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Babička', '2025-01-02', 243, 50, 1, 'Nádherná pasáž o přírodě a vztazích.', 'Klasický román české literatury.', 'rodina, příroda, venkov', 9, 2, 2, 3, 1);
 
-INSERT INTO Book (title, acquirement_date, total_pages, on_page, times_read, notes, description, keywords, rating, author_id, publisher_id, state_id)
-VALUES ('Proměna', '2025-01-03', 72, 15, 2, 'Intenzivní příběh o proměně a izolaci.', 'Příběh o proměně člověka v hmyz.', 'existencialismus, kafka, povídka', 10, 3, 3, 3);
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Proměna', '2025-01-03', 72, 15, 2, 'Intenzivní příběh o proměně a izolaci.', 'Příběh o proměně člověka v hmyz.', 'existencialismus, kafka, povídka', 10, 3, 3, 4, 1);
 
