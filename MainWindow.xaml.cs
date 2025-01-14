@@ -30,12 +30,12 @@ namespace BookDb
                                         p.name AS publisher_name,
                                         b.acquirement_date,
                                         b.total_pages,
-                                        b.on_page,
-                                        b.times_read,
+                                        b.current_page,
+                                        b.total_reads,
                                         b.rating || ' z ' || 10 as RATING,
                                         b.keywords,
                                         b.description,
-                                        b.on_page || ' z ' || b.total_pages AS ON_PAGE_TOTAL
+                                        b.current_page || ' z ' || b.total_pages AS ON_PAGE_TOTAL
                                     FROM 
                                         Book b
                                     JOIN 
@@ -53,22 +53,19 @@ namespace BookDb
             }
             catch (Exception ex)
             {
-                MessageBoxResult result = MessageBox.Show($" Chyba při připojování k databázi, chcete opakovat pokus?\n Error: {ex.Message}", "Chyba", MessageBoxButton.YesNoCancel, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show($" Chyba při připojování k databázi, chcete opakovat pokus?\n Error: {ex.Message}",
+                    "Chyba", MessageBoxButton.YesNo, MessageBoxImage.Error);
                 if (result == MessageBoxResult.Yes)
-                {
                     LoadBooks();
-                }
-                else if (result == MessageBoxResult.Cancel)
-                {
+                else if (result == MessageBoxResult.No)
                     Application.Current.Shutdown();
-                }
             }
         }
 
 
         private void AddBookButton_Click(object sender, RoutedEventArgs e)
         {
-            var addBookWindow = new AddBookWindow(connectionString);
+            var addBookWindow = new BookManagementWindow(connectionString);
             bool? dialogResult = addBookWindow.ShowDialog();
 
             if (dialogResult == true)
@@ -87,7 +84,7 @@ namespace BookDb
             if (BooksDataGrid.SelectedItem is DataRowView selectedRow)
             {
                 int bookId = Convert.ToInt32(selectedRow["BOOK_ID"]);
-                var detailsWindow = new BookDetailsWindow(bookId, connectionString);
+                var detailsWindow = new BookManagementWindow(connectionString, bookId);
 
                 bool? dialogResult = detailsWindow.ShowDialog();
 

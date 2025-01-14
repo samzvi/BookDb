@@ -47,7 +47,7 @@
                 <DataGridTextColumn Header="Vydavatel" Binding="{Binding PUBLISHER_NAME}" Width="150" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Datum pořízení" Binding="{Binding ACQUIREMENT_DATE, StringFormat='d'}" Width="100" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding ON_PAGE_TOTAL}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
-                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TIMES_READ}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
+                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TOTAL_READS}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
                 <DataGridTextColumn Header="Hodnocení" Binding="{Binding RATING}" Width="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
                 <DataGridTextColumn Header="Klíčová slova" Binding="{Binding KEYWORDS}" Width="200" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Popis" Binding="{Binding DESCRIPTION}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
