@@ -9,7 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="edit.png" />
+    <None Remove="trash-can.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="edit.png" />
+    <Resource Include="trash-can.png" />
   </ItemGroup>
 
 </Project>

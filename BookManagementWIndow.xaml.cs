@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Windows;
 using FirebirdSql.Data.FirebirdClient;
@@ -23,9 +24,9 @@ namespace BookDb
 
             if (_isEditMode)
             {
-                LoadBookDetails();
                 Title = "Upravit knihu";
                 TitleLabel.Content = "Upravit knihu";
+                LoadBookDetails();
             }
             else
             {
@@ -38,14 +39,18 @@ namespace BookDb
         private void ToggleDetailFields(bool isVisible)
         {
             Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            CurrentPageTextBox.Visibility = visibility;
-            TotalReadsTextBox.Visibility = visibility;
-            RatingTextBox.Visibility = visibility;
             CurrentPageLabel.Visibility = visibility;
+            CurrentPageTextBox.Visibility = visibility;
             TotalReadsLabel.Visibility = visibility;
+            TotalReadsTextBox.Visibility = visibility;
             RatingLabel.Visibility = visibility;
-            TotalPagesTextBox.Visibility = Visibility.Visible;
-            TotalPagesLabel.Visibility = Visibility.Visible;
+            RatingSlider.Visibility = visibility;
+            IsRatedCheckBox.Visibility = visibility;
+            OwnershipLabel.Visibility = visibility;
+            OwnershipStateComboBox.Visibility = visibility;
+            ReadingLabel.Visibility = visibility;
+            ReadingRadioButtons.Visibility = visibility;
+            DeleteButton.Visibility = visibility;
         }
 
         private void LoadBookDetails()
@@ -67,7 +72,9 @@ namespace BookDb
                                     publisher_id, 
                                     keywords, 
                                     description, 
-                                    notes
+                                    notes,
+                                    reading_state,
+                                    ownership_state
                                 FROM Book 
                                 WHERE id = @Id";
 
@@ -86,11 +93,19 @@ namespace BookDb
                             CurrentPageTextBox.Text = reader["current_page"].ToString();
                             TotalPagesTextBox.Text = reader["total_pages"].ToString();
                             TotalReadsTextBox.Text = reader["total_reads"].ToString();
-                            RatingTextBox.Text = reader["rating"].ToString();
                             PublisherComboBox.SelectedValue = reader["publisher_id"];
                             KeywordsTextBox.Text = reader["keywords"].ToString();
                             DescriptionTextBox.Text = reader["description"].ToString();
                             NotesTextBox.Text = reader["notes"].ToString();
+                            OwnershipStateComboBox.SelectedValue = reader["ownership_state"];
+                            ReadingStateReading.IsChecked = (int)reader["reading_state"] == 3;
+                            ReadingStateNotReading.IsChecked = (int)reader["reading_state"] == 4;
+                            if (reader["rating"] == DBNull.Value)
+                            {
+                                IsRatedCheckBox.IsChecked = false;
+                                RatingSlider.IsEnabled = false;
+                            } else
+                                RatingSlider.Value = (int)reader["rating"];
                         }
                     }
                 }
@@ -111,6 +126,7 @@ namespace BookDb
                     connection.Open();
                     LoadComboBoxData(connection, AuthorComboBox, "SELECT id, name || ' ' || surname AS full_name FROM Author");
                     LoadComboBoxData(connection, PublisherComboBox, "SELECT id, name FROM Publisher");
+                    LoadComboBoxData(connection, OwnershipStateComboBox, "SELECT id, name FROM State");
                 }
             }
             catch (Exception ex)
@@ -129,6 +145,8 @@ namespace BookDb
                 {
                     int id = reader.GetInt32(0);
                     string name = reader.GetString(1);
+                    if (name == "Čtu" || name == "Nečtu")
+                        continue;
                     dictionary[id] = name;
                 }
             }
@@ -156,11 +174,13 @@ namespace BookDb
                                 publisher_id = @Publisher_Id, 
                                 keywords = @Keywords, 
                                 description = @Description, 
-                                notes = @Notes
+                                notes = @Notes,
+                                reading_state = @Reading_State,
+                                ownership_state = @Ownership_State
                             WHERE id = @Id"
                             : @"
-                            INSERT INTO Book (title, author_id, total_pages, current_page, total_reads, rating, acquirement_date, publisher_id, keywords, description, notes)
-                                VALUES (@Title, @Author_Id, @Total_Pages, @Current_Page, @Total_Reads, @Rating, @Acquirement_Date, @Publisher_Id, @Keywords, @Description, @Notes)";
+                            INSERT INTO Book (title, author_id, total_pages, current_page, total_reads, rating, acquirement_date, publisher_id, keywords, description, notes, reading_state, ownership_state)
+                                VALUES (@Title, @Author_Id, @Total_Pages, 0, 0, null, @Acquirement_Date, @Publisher_Id, @Keywords, @Description, @Notes, 4, 1)";
 
                     FbCommand command = new FbCommand(query, connection);
                     command.Parameters.AddWithValue("@Title", TitleTextBox.Text);
@@ -168,14 +188,16 @@ namespace BookDb
                     command.Parameters.AddWithValue("@Total_Pages", TotalPagesTextBox.Text);
                     command.Parameters.AddWithValue("@Current_Page", CurrentPageTextBox.Text);
                     command.Parameters.AddWithValue("@Total_Reads", TotalReadsTextBox.Text);
-                    command.Parameters.AddWithValue("@Rating", RatingTextBox.Text);
+                    command.Parameters.AddWithValue("@Rating", IsRatedCheckBox.IsChecked == false ? DBNull.Value : RatingSlider.Value);
                     command.Parameters.AddWithValue("@Acquirement_Date", AcquirementDatePicker.SelectedDate.HasValue
                         ? (object)AcquirementDatePicker.SelectedDate.Value
                         : DBNull.Value);
                     command.Parameters.AddWithValue("@Publisher_Id", PublisherComboBox.SelectedValue);
-                    command.Parameters.AddWithValue("@Keywords", KeywordsTextBox.Text);
+                    command.Parameters.AddWithValue("@Keywords", KeywordsTextBox.Text == "" ? DBNull.Value : KeywordsTextBox.Text);
                     command.Parameters.AddWithValue("@Description", DescriptionTextBox.Text);
                     command.Parameters.AddWithValue("@Notes", NotesTextBox.Text);
+                    command.Parameters.AddWithValue("@Reading_State", ReadingStateReading.IsChecked == true ? 3 : 4);
+                    command.Parameters.AddWithValue("@Ownership_State", OwnershipStateComboBox.SelectedValue);
 
                     if (_isEditMode)
                         command.Parameters.AddWithValue("@Id", _bookId);
@@ -196,6 +218,52 @@ namespace BookDb
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(
+                $" Opravdu chcete smazat knihu?",
+                "Potvrzení smazání",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    using (FbConnection connection = new FbConnection(_connectionString))
+                    {
+                        connection.Open();
+
+                        string deleteQuery = "DELETE FROM Book WHERE id = @BookId";
+                        FbCommand command = new FbCommand(deleteQuery, connection);
+                        command.Parameters.AddWithValue("@BookId", _bookId);
+                        command.ExecuteNonQuery();
+
+                        MessageBox.Show(
+                            $" Proběhlo smazání knihy",
+                            "Úspěch",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $" Chyba při mazání knihy:\n Error: {ex.Message}",
+                        "Chyba",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+            DialogResult = true;
+            Close();
+        }
+
+        private void IsRatedCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            RatingSlider.IsEnabled = IsRatedCheckBox.IsChecked == true;
         }
     }
 }

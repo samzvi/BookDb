@@ -47,7 +47,7 @@ namespace BookDb
                                         b.total_pages,
                                         b.current_page,
                                         b.total_reads,
-                                        b.rating || ' z ' || 10 as RATING,
+                                        COALESCE(b.rating || ' z ' || 10, 'Nehodnoceno') AS RATING,
                                         b.keywords,
                                         b.description,
                                         b.notes,
