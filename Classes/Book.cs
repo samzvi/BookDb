@@ -1,17 +1,43 @@
 ﻿using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using BookDb.Models;
 
 namespace BookDb
 {
-    public class Book : INotifyPropertyChanged
+    public class Book : INotifyPropertyChanged, IDataErrorInfo
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+        private readonly Dictionary<string, Func<string?>> _validationRules;
+        public Book()
+        {
+            // Define validation rules in one place
+            _validationRules = new Dictionary<string, Func<string?>>
+            {
+                { nameof(Title), () => string.IsNullOrWhiteSpace(Title) ? "Název nesmí být prázdný" : null },
+                { nameof(AuthorId), () => AuthorId is null ? "Vyber autora" : null },
+                { nameof(ReadingState), () => ReadingState is null ? "Vyber stav čtení" : null },
+                { nameof(OwnershipState), () => OwnershipState is null ? "Vyber stav vlastnictví" : null },
+                { nameof(TotalPages), () => TotalPages is null ? "Zadej kolik ma kniha stran" : null },
+                { nameof(PublisherId), () => PublisherId is null ? "Vyber vydavatele" : null }
+            };
+        }
 
         private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
+        public string? this[string columnName]
+        {
+            get => _validationRules.ContainsKey(columnName) ? _validationRules[columnName]() : null;
+        }
+
+        public string Error => string.Join(Environment.NewLine, _validationRules.Values.Select(validate => validate()).Where(error => !string.IsNullOrEmpty(error)));
+
+        // This property can be used in the UI to disable/enable Save Button
+        public bool CanSave => string.IsNullOrEmpty(Error);
 
         private int? _id;
         public int? Id
@@ -28,6 +54,7 @@ namespace BookDb
         }
 
         private string? _title;
+        [Required]
         public string? Title
         {
             get { return _title; }
@@ -37,6 +64,7 @@ namespace BookDb
                 {
                     _title = value;
                     OnPropertyChanged(nameof(Title));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -51,6 +79,7 @@ namespace BookDb
                 {
                     _acquirementDate = value;
                     OnPropertyChanged(nameof(AcquirementDate));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -65,6 +94,7 @@ namespace BookDb
                 {
                     _totalPages = value;
                     OnPropertyChanged(nameof(TotalPages));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -183,6 +213,7 @@ namespace BookDb
                 {
                     _author = value;
                     OnPropertyChanged(nameof(Author));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -217,12 +248,13 @@ namespace BookDb
                 {
                     _publisher = value;
                     OnPropertyChanged(nameof(Publisher));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
 
-        private int _readingState;
-        public int ReadingState
+        private int? _readingState;
+        public int? ReadingState
         {
             get { return _readingState; }
             set
@@ -231,12 +263,13 @@ namespace BookDb
                 {
                     _readingState = value;
                     OnPropertyChanged(nameof(ReadingState));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
 
-        private int _ownershipState;
-        public int OwnershipState
+        private int? _ownershipState;
+        public int? OwnershipState
         {
             get { return _ownershipState; }
             set
@@ -245,6 +278,7 @@ namespace BookDb
                 {
                     _ownershipState = value;
                     OnPropertyChanged(nameof(OwnershipState));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }

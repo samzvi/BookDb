@@ -3,17 +3,33 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Správa knih" Height="600" Width="400">
     <Window.Resources>
+        <ControlTemplate x:Key="ValidationErrorTemplate">
+            <DockPanel>
+                <TextBlock Foreground="#BFFF0011" 
+                           Margin="0,0,0,0" 
+                           Padding="6, 4"
+                           VerticalAlignment="Center" 
+                           HorizontalAlignment="Center"
+                           IsHitTestVisible="False"
+                           Text="{Binding [0].ErrorContent}" />
+            </DockPanel>
+        </ControlTemplate>
+        
         <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Validation.ErrorTemplate" 
+                    Value="{StaticResource ValidationErrorTemplate}" />
             <Setter Property="Margin" Value="120, 2, 0, 2" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="Padding" Value="3" />
         </Style>
 
         <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Validation.ErrorTemplate" 
+                    Value="{StaticResource ValidationErrorTemplate}" />
             <Setter Property="Margin" Value="120, 2, 0, 2" />
             <Setter Property="Padding" Value="3" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="IsEditable" Value="True" />
+            <Setter Property="IsEditable" Value="False" />
             <Setter Property="StaysOpenOnEdit" Value="True" />
             <Setter Property="IsTextSearchEnabled" Value="True" />
             <Setter Property="SelectedValuePath" Value="Id" />
@@ -23,6 +39,7 @@
         <Style TargetType="Label">
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+
     </Window.Resources>
 
     <Grid Margin="10, 0, 10, 10">
@@ -44,53 +61,187 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label x:Name="TitleLabel" Content="Podrobnosti o titulu" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Grid.Row="0" Margin="0, 0, 0, 10" />
+        <Label x:Name="TitleLabel"
+               Content="Podrobnosti o titulu"
+               FontSize="18" FontWeight="Bold"
+               HorizontalAlignment="Center"
+               Grid.Row="0"
+               Margin="0, 0, 0, 10"
+         />
 
-        <Label Content="Název:" Grid.Row="1" VerticalAlignment="Center"/>
-        <TextBox x:Name="TitleTextBox" Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Style="{StaticResource TextBoxStyle}" />
+        <Label Content="Název:"
+               Grid.Row="1"
+               VerticalAlignment="Center"/>
+        <TextBox x:Name="TitleTextBox"
+                 Text="{Binding Title,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True,
+                    NotifyOnValidationError=True}"
+                 Grid.Row="1" Style="{StaticResource TextBoxStyle}" 
+        />
 
-        <Label Content="Autor:" Grid.Row="2" />
-        <ComboBox x:Name="AuthorComboBox" SelectedValue="{Binding AuthorId, Mode=TwoWay}" DisplayMemberPath="FullName" Grid.Row="2" Style="{StaticResource ComboBoxStyle}" />
+        <Label Content="Autor:"
+               Grid.Row="2"/>
+        <ComboBox x:Name="AuthorComboBox"
+                  SelectedValue="{Binding AuthorId,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True,
+                    NotifyOnValidationError=True}"
+                  DisplayMemberPath="FullName"
+                  Grid.Row="2"
+                  Style="{StaticResource ComboBoxStyle}"
+        />
 
-        <Label x:Name="ReadingLabel" Content="Stav čtení:" Grid.Row="3" />
-        <ComboBox x:Name="ReadingStateComboBox" SelectedValue="{Binding ReadingState, Mode=TwoWay}" Grid.Row="3" Style="{StaticResource ComboBoxStyle}" />
+        <Label x:Name="ReadingLabel"
+               Content="Stav čtení:"
+               Grid.Row="3"/>
+        <ComboBox x:Name="ReadingStateComboBox"
+                  SelectedValue="{Binding ReadingState,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True,
+                    NotifyOnValidationError=True}"
+                  Grid.Row="3" Style="{StaticResource ComboBoxStyle}"
+        />
 
-        <Label x:Name="OwnershipLabel" Content="Stav vlastnictví:" Grid.Row="4" />
-        <ComboBox x:Name="OwnershipStateComboBox" SelectedValue="{Binding OwnershipState, Mode=TwoWay}" Grid.Row="4" Style="{StaticResource ComboBoxStyle}" />
+        <Label x:Name="OwnershipLabel"
+               Content="Stav vlastnictví:"
+               Grid.Row="4"/>
+        <ComboBox x:Name="OwnershipStateComboBox" 
+                  SelectedValue="{Binding OwnershipState,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True,
+                    NotifyOnValidationError=True}"
+                  Grid.Row="4" Style="{StaticResource ComboBoxStyle}" 
+        />
 
-        <Label Content="Datum pořízení:" Grid.Row="5"/>
-        <DatePicker x:Name="AcquirementDatePicker" SelectedDate="{Binding AcquirementDate, Mode=TwoWay}" Grid.Row="5" Margin="120, 2, 0, 2" VerticalAlignment="Center" Foreground="Black" />
+        <Label Content="Datum pořízení:"
+               Grid.Row="5"/>
+        <DatePicker x:Name="AcquirementDatePicker"
+                    SelectedDate="{Binding AcquirementDate, Mode=TwoWay}"
+                    Grid.Row="5" Margin="120, 2, 0, 2"
+                    VerticalAlignment="Center" 
+                    Foreground="Black"
+                    Language="cs-CZ">
+        </DatePicker>
+        
 
-        <Label x:Name="CurrentPageLabel" Content="Aktuální stránka:" Grid.Row="6" />
-        <TextBox x:Name="CurrentPageTextBox" Text="{Binding CurrentPage, Mode=TwoWay}" Grid.Row="6" Style="{StaticResource TextBoxStyle}" TextAlignment="Right" Background="{x:Null}" />
+            <Label x:Name="CurrentPageLabel" 
+               Content="Aktuální stránka:" 
+               Grid.Row="6" />
+        <TextBox x:Name="CurrentPageTextBox" 
+                 Text="{Binding CurrentPage, Mode=TwoWay}" 
+                 Grid.Row="6" Style="{StaticResource TextBoxStyle}" 
+                 TextAlignment="Right" Background="{x:Null}" 
+        />
 
-        <Label x:Name="TotalPagesLabel" Content="Celkem stran:" Grid.Row="7" />
-        <TextBox x:Name="TotalPagesTextBox" Text="{Binding TotalPages, Mode=TwoWay}" Grid.Row="7" Style="{StaticResource TextBoxStyle}" TextAlignment="Right" />
+        <Label x:Name="TotalPagesLabel" 
+               Content="Celkem stran:" 
+               Grid.Row="7" />
+        <TextBox x:Name="TotalPagesTextBox" 
+                 Text="{Binding TotalPages,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True,
+                    NotifyOnValidationError=True}"
+                 Grid.Row="7" Style="{StaticResource TextBoxStyle}" 
+                 TextAlignment="Right" 
+        />
 
-        <Label x:Name="TotalReadsLabel" Content="Kolikrát přečteno:" Grid.Row="8" />
-        <TextBox x:Name="TotalReadsTextBox" Text="{Binding TotalReads, Mode=TwoWay}" Grid.Row="8" Style="{StaticResource TextBoxStyle}" TextAlignment="Right" />
+        <Label x:Name="TotalReadsLabel" 
+               Content="Kolikrát přečteno:" 
+               Grid.Row="8" />
+        <TextBox x:Name="TotalReadsTextBox" 
+                 Text="{Binding TotalReads, Mode=TwoWay}" 
+                 Grid.Row="8" Style="{StaticResource TextBoxStyle}" 
+                 TextAlignment="Right" 
+        />
 
-        <Label x:Name="RatingLabel" Content="Hodnocení:" Grid.Row="9" />
-        <CheckBox x:Name="IsRatedCheckBox" IsChecked="{Binding Rating, Mode=TwoWay}" Grid.Row="9" Margin="120, 2, 0, 2" VerticalAlignment="Center" />
-        <Slider x:Name="RatingSlider" Value="{Binding Rating, Mode=TwoWay}" Grid.Row="9" TickPlacement="BottomRight" AutoToolTipPlacement="BottomRight" Minimum="1" Maximum="10" TickFrequency="1" Margin="140, 2, 0, 2" VerticalAlignment="Center" />
+        <Label x:Name="RatingLabel"
+               Content="Hodnocení:" 
+               Grid.Row="9" />
+        <CheckBox x:Name="IsRatedCheckBox" 
+                  IsChecked="{Binding Rating, Mode=TwoWay}" 
+                  Grid.Row="9" Margin="120, 2, 0, 2" 
+                  VerticalAlignment="Center"
+                  Click="IsRatedCheckBox_Click"/>
+        <Slider x:Name="RatingSlider" 
+                Value="{Binding Rating, Mode=TwoWay}" 
+                Grid.Row="9" TickPlacement="BottomRight" 
+                AutoToolTipPlacement="BottomRight" 
+                Minimum="1" Maximum="10" 
+                TickFrequency="1" 
+                Margin="140, 2, 0, 2" 
+                VerticalAlignment="Center" 
+                IsEnabled="False"
+        />
 
-        <Label Content="Klíčová slova:" Grid.Row="10" />
-        <TextBox x:Name="KeywordsTextBox" Text="{Binding Keywords, Mode=TwoWay}" Grid.Row="10" Style="{StaticResource TextBoxStyle}" />
+        <Label Content="Klíčová slova:" 
+               Grid.Row="10" />
+        <TextBox x:Name="KeywordsTextBox" 
+                 Text="{Binding Keywords, Mode=TwoWay}" 
+                 Grid.Row="10" 
+                 Style="{StaticResource TextBoxStyle}"
+        />
 
-        <Label Content="Vydavatelství:" Grid.Row="11" />
-        <ComboBox x:Name="PublisherComboBox" SelectedValue="{Binding PublisherId, Mode=TwoWay}" Grid.Row="11" Style="{StaticResource ComboBoxStyle}" />
+        <Label Content="Vydavatelství:" 
+               Grid.Row="11" />
+        <ComboBox x:Name="PublisherComboBox" 
+                  SelectedValue="{Binding PublisherId,
+                    Mode=TwoWay,
+                    UpdateSourceTrigger=PropertyChanged, 
+                    ValidatesOnDataErrors=True,
+                    NotifyOnValidationError=True}"
+                  Grid.Row="11" 
+                  Style="{StaticResource ComboBoxStyle}" 
+        />
 
-        <Label Content="Popis:" Grid.Row="12" VerticalAlignment="Top" />
-        <TextBox x:Name="DescriptionTextBox" Text="{Binding Description, Mode=TwoWay}" Grid.Row="12" Margin="120, 2, 0, 2" TextWrapping="Wrap" Padding="3"/>
+        <Label Content="Popis:" 
+               Grid.Row="12" 
+               VerticalAlignment="Top" />
+        <TextBox x:Name="DescriptionTextBox" 
+                 Text="{Binding Description, Mode=TwoWay}"
+                 Grid.Row="12" Margin="120, 2, 0, 2" TextWrapping="Wrap"
+                 Padding="3"
+        />
 
-        <Label Content="Poznámky:" Grid.Row="13" VerticalAlignment="Top" />
-        <TextBox x:Name="NotesTextBox" Text="{Binding Notes, Mode=TwoWay}" Grid.Row="13" Margin="120, 2, 0, 2" TextWrapping="Wrap" Padding="3"/>
+        <Label Content="Poznámky:" 
+               Grid.Row="13" 
+               VerticalAlignment="Top" />
+        <TextBox x:Name="NotesTextBox" 
+                 Text="{Binding Notes, Mode=TwoWay}"
+                 Grid.Row="13" Margin="120, 2, 0, 2" 
+                 TextWrapping="Wrap" Padding="3"
+        />
 
-        <Button x:Name="DeleteButton" Content="Smazat" Grid.Row="14" Padding="3" Click="DeleteButton_Click" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontSize="9" FontWeight="DemiBold" />
+        <Button x:Name="DeleteButton" 
+                Content="Smazat"
+                Grid.Row="14" 
+                Padding="3" 
+                Click="DeleteButton_Click"
+                HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom" 
+                FontSize="9" 
+                FontWeight="DemiBold" />
 
-        <StackPanel Grid.Row="14" Orientation="Horizontal" Width="Auto" Height="30" Margin="0, 10, 0, 0" HorizontalAlignment="Right">
-            <Button x:Name="SaveButton" Content="Uložit" Width="100" Margin="0,0,10,0" Click="SaveButton_Click" IsDefault="True" IsEnabled="False" />
-            <Button Content="Zrušit" Width="100" Click="CancelButton_Click" />
+        <StackPanel Grid.Row="14" 
+                    Orientation="Horizontal"
+                    Width="Auto" Height="30"
+                    Margin="0, 10, 0, 0" 
+                    HorizontalAlignment="Right">
+            <Button x:Name="SaveButton" 
+                    Content="Uložit" 
+                    Width="100" 
+                    Margin="0,0,10,0" 
+                    Click="SaveButton_Click"
+                    IsDefault="True" 
+                    IsEnabled="{Binding CanSave}" />
+            <Button Content="Zrušit" 
+                    Width="100" 
+                    Click="CancelButton_Click" />
         </StackPanel>
     </Grid>
 </Window>

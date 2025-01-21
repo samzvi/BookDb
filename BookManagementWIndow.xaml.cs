@@ -21,7 +21,6 @@ namespace BookDb
             InitializeComponent();
 
             _isEditMode = isEditMode;
-            SaveButton.IsEnabled = CanSave();
 
             if (_isEditMode && book != null)
             {
@@ -93,20 +92,9 @@ namespace BookDb
                     Close();
                 }
                 else
-                    MessageBox.Show("Kniha nebyla uložena", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Kniha nebyla uložena\nZkontroluj zda jsou vyžadována pole vyplněna", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private void ValidateInput(object sender, RoutedEventArgs e)
-        {
-            SaveButton.IsEnabled = CanSave();
-        }
-
-        private bool CanSave() // todo
-        {   
-            return true;
-        }
-
 
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

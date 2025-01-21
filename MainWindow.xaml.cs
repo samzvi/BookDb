@@ -59,13 +59,15 @@ namespace BookDb
                 AuthorName = $"{book.Author.Name} {book.Author.Surname}",
                 PublisherName = book.Publisher.Name,
                 AcquirementDate = book.AcquirementDate?.ToString("d"),
-                OnPageTotal = $"{book.CurrentPage} z {book.TotalPages}",
+                OnPageTotal = book.CurrentPage == null
+                              ? $"0 z {book.TotalPages}"
+                              : $"{book.CurrentPage} z {book.TotalPages}",
                 book.TotalReads,
                 Rating = (book.Rating == null || book.Rating == 0) ? "Nehodnoceno" : $"{book.Rating} z 10",
-                ReadingColor = stateModel.ReadingStates[book.ReadingState - 1].Color,
-                ReadingName = stateModel.ReadingStates[book.ReadingState - 1].Name,
-                OwnershipColor = stateModel.OwnershipStates[book.OwnershipState - 1].Color,
-                OwnershipName = stateModel.OwnershipStates[book.OwnershipState - 1].Name,
+                ReadingColor = stateModel.ReadingStates.FirstOrDefault(state => state.Id == book.ReadingState).Color,
+                ReadingName = stateModel.ReadingStates.FirstOrDefault(state => state.Id == book.ReadingState).Name,
+                OwnershipColor = stateModel.OwnershipStates.FirstOrDefault(state => state.Id == book.OwnershipState).Color,
+                OwnershipName = stateModel.OwnershipStates.FirstOrDefault(state => state.Id == book.OwnershipState).Name,
                 book.Keywords,
                 book.Description,
                 book.Notes
