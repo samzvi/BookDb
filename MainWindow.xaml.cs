@@ -1,122 +1,106 @@
 ﻿using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows;
-using FirebirdSql.Data.FirebirdClient;
-
+using System.Windows.Media;
+using BookDb.Models;
 
 namespace BookDb
 {
     public partial class MainWindow : Window
     {
-        private readonly string dbPath = "D:/fbdata/BOOKSDB.fdb";
-        private readonly string dbInitPath = "..\\..\\..\\db\\DbInitialize.bat";
+        private readonly string dbPath = @"D:/fbdata/BOOKSDB.fdb";
+        private readonly string dbInitPath = @"..\..\..\db\DbInitialize.bat";
         private readonly string connectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
+        private BookModel? bookModel;
+        private StateModel? stateModel;
+
         public MainWindow()
         {
+            InitializeDatabase();
+
             InitializeComponent();
 
+            bookModel = new BookModel();
+            stateModel = new StateModel();
+
+            LoadDefaultView();
+        }
+
+        private void InitializeDatabase()
+        {
             if (!File.Exists(dbPath))
             {
-                MessageBoxResult result = MessageBox.Show($" Database není vytvořena, chcete spustit pokus o vytvoření?",
-                "Chyba", MessageBoxButton.YesNo, MessageBoxImage.Error);
+                MessageBoxResult result = MessageBox.Show(
+                    "Database není vytvořena, chcete spustit pokus o vytvoření?",
+                    "Chyba",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Error);
+
                 if (result == MessageBoxResult.Yes)
-                    Process.Start(dbInitPath);
-                else
-                    Application.Current.Shutdown();
-            }
-
-            LoadBooks();
-        }
-
-
-        public void LoadBooks()
-        {
-            try
-            {
-                using (FbConnection connection = new FbConnection(connectionString))
                 {
-                    connection.Open();
-
-                    string query = @"SELECT 
-                                        b.id AS book_id,
-                                        b.title,
-                                        a.name || ' ' || a.surname AS author_name,
-                                        p.name AS publisher_name,
-                                        b.acquirement_date,
-                                        b.total_pages,
-                                        b.current_page,
-                                        b.total_reads,
-                                        COALESCE(b.rating || ' z ' || 10, 'Nehodnoceno') AS RATING,
-                                        b.keywords,
-                                        b.description,
-                                        b.notes,
-                                        rs.color AS reading_state_color,
-                                        os.color AS ownership_state_color,
-                                        b.current_page || ' z ' || b.total_pages AS ON_PAGE_TOTAL
-                                    FROM 
-                                        Book b
-                                    JOIN 
-                                        Author a ON b.author_id = a.id
-                                    JOIN 
-                                        Publisher p ON b.publisher_id = p.id
-                                    LEFT JOIN 
-                                        State rs ON b.reading_state = rs.id
-                                    LEFT JOIN 
-                                        State os ON b.ownership_state = os.id";
-
-                    FbCommand command = new FbCommand(query, connection);
-                    FbDataAdapter adapter = new FbDataAdapter(command);
-                    DataTable dataTable = new DataTable();
-                    adapter.Fill(dataTable);
-
-                    BooksDataGrid.ItemsSource = dataTable.DefaultView;
+                    Process.Start(dbInitPath);
+                }
+                else
+                {
+                    Application.Current.Shutdown();
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBoxResult result = MessageBox.Show($" Chyba při připojování k databázi, chcete opakovat pokus?\n Error: {ex.Message}",
-                    "Chyba", MessageBoxButton.YesNo, MessageBoxImage.Error);
-                if (result == MessageBoxResult.Yes)
-                    LoadBooks();
-                else if (result == MessageBoxResult.No)
-                    Application.Current.Shutdown();
-            }
         }
 
+        public void LoadDefaultView()
+        {
+            bookModel.FetchBooks();
+            var booksWithDetails = bookModel.Books.Select(book => new
+            {
+                book.Id,
+                book.Title,
+                AuthorName = $"{book.Author.Name} {book.Author.Surname}",
+                PublisherName = book.Publisher.Name,
+                AcquirementDate = book.AcquirementDate?.ToString("d"),
+                OnPageTotal = $"{book.CurrentPage} z {book.TotalPages}",
+                book.TotalReads,
+                Rating = (book.Rating == null || book.Rating == 0) ? "Nehodnoceno" : $"{book.Rating} z 10",
+                ReadingColor = stateModel.ReadingStates[book.ReadingState - 1].Color,
+                ReadingName = stateModel.ReadingStates[book.ReadingState - 1].Name,
+                OwnershipColor = stateModel.OwnershipStates[book.OwnershipState - 1].Color,
+                OwnershipName = stateModel.OwnershipStates[book.OwnershipState - 1].Name,
+                book.Keywords,
+                book.Description,
+                book.Notes
+            }).ToList(); BooksDataGrid.ItemsSource = null;
+
+            BooksDataGrid.ItemsSource = booksWithDetails;
+        }
 
         private void AddBookButton_Click(object sender, RoutedEventArgs e)
         {
-            var addBookWindow = new BookManagementWindow(connectionString);
+            var addBookWindow = new BookManagementWindow(connectionString, isEditMode: false);
             bool? dialogResult = addBookWindow.ShowDialog();
 
             if (dialogResult == true)
             {
-                LoadBooks();
+                LoadDefaultView();
             }
         }
 
         private void CreateAuthorButton_Click(object sender, RoutedEventArgs e)
         {
-
+            MessageBox.Show("Vytvoření autora není implementováno.", "Informace", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ShowDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (BooksDataGrid.SelectedItem is DataRowView selectedRow)
-            {
-                int bookId = Convert.ToInt32(selectedRow["BOOK_ID"]);
-                var detailsWindow = new BookManagementWindow(connectionString, bookId);
+            var selectedRow = BooksDataGrid.SelectedItem;
 
-                bool? dialogResult = detailsWindow.ShowDialog();
+            int bookId = (int)selectedRow.GetType().GetProperty("Id").GetValue(selectedRow);
 
-                if (dialogResult == true)
-                    LoadBooks();
-            }
-            else
-            {
-                MessageBox.Show("Vyber knihu pro zobrazeni informaci.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            var detailsWindow = new BookManagementWindow(connectionString, isEditMode: true, bookModel.Books.FirstOrDefault(book => book.Id == bookId));
+            bool? dialogResult = detailsWindow.ShowDialog();
+
+            if (dialogResult == true)
+                LoadDefaultView();
         }
     }
 }

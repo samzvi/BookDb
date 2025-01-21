@@ -1,219 +1,113 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Windows;
-using FirebirdSql.Data.FirebirdClient;
+﻿using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Media;
+using BookDb.Models;
 
 namespace BookDb
 {
     public partial class BookManagementWindow : Window
     {
-        private readonly string _connectionString;
-        private readonly int? _bookId;
-        private readonly bool _isEditMode;
 
-        public BookManagementWindow(string connectionString, int? bookId = null)
+        private readonly bool _isEditMode;
+        private readonly AuthorModel _authorModel = new();
+        private readonly PublisherModel _publisherModel = new();
+        private readonly StateModel _stateModel = new();
+        private Book? _book;
+
+
+        public BookManagementWindow(string connectionString, bool isEditMode, Book? book = null)
         {
             InitializeComponent();
-            _connectionString = connectionString;
-            _bookId = bookId;
-            _isEditMode = bookId.HasValue;
 
-            LoadComboBoxOptions();
+            _isEditMode = isEditMode;
+            SaveButton.IsEnabled = CanSave();
 
-            if (_isEditMode)
+            if (_isEditMode && book != null)
             {
+                _book = book;
+                DataContext = _book;
+
                 Title = "Upravit knihu";
                 TitleLabel.Content = "Upravit knihu";
-                LoadBookDetails();
+                DeleteButton.Visibility = Visibility.Visible;
             }
             else
             {
+                _book = new();
+                DataContext = _book;
+
                 Title = "Přidat knihu";
                 TitleLabel.Content = "Přidat knihu";
-                ToggleDetailFields(false);
+                DeleteButton.Visibility = Visibility.Collapsed;
+
             }
+
+            LoadComboBoxes();
         }
 
-        private void ToggleDetailFields(bool isVisible)
+
+        private void LoadComboBoxes()
         {
-            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            CurrentPageLabel.Visibility = visibility;
-            CurrentPageTextBox.Visibility = visibility;
-            TotalReadsLabel.Visibility = visibility;
-            TotalReadsTextBox.Visibility = visibility;
-            RatingLabel.Visibility = visibility;
-            RatingSlider.Visibility = visibility;
-            IsRatedCheckBox.Visibility = visibility;
-            OwnershipLabel.Visibility = visibility;
-            OwnershipStateComboBox.Visibility = visibility;
-            ReadingLabel.Visibility = visibility;
-            ReadingRadioButtons.Visibility = visibility;
-            DeleteButton.Visibility = visibility;
+            AuthorComboBox.ItemsSource = _authorModel.Authors;
+            PublisherComboBox.ItemsSource = _publisherModel.Publishers;
+            OwnershipStateComboBox.ItemsSource = _stateModel.OwnershipStates;
+            ReadingStateComboBox.ItemsSource = _stateModel.ReadingStates;
         }
 
-        private void LoadBookDetails()
-        {
-            try
-            {
-                using (FbConnection connection = new FbConnection(_connectionString))
-                {
-                    connection.Open();
-                    string query = @"
-                                SELECT 
-                                    title, 
-                                    author_id, 
-                                    total_pages, 
-                                    current_page, 
-                                    total_reads, 
-                                    rating, 
-                                    acquirement_date, 
-                                    publisher_id, 
-                                    keywords, 
-                                    description, 
-                                    notes,
-                                    reading_state,
-                                    ownership_state
-                                FROM Book 
-                                WHERE id = @Id";
-
-                    FbCommand command = new FbCommand(query, connection);
-                    command.Parameters.AddWithValue("@Id", _bookId);
-
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            TitleTextBox.Text = reader["title"].ToString();
-                            AuthorComboBox.SelectedValue = reader["author_id"];
-                            AcquirementDatePicker.SelectedDate = reader["acquirement_date"] != DBNull.Value
-                                ? Convert.ToDateTime(reader["acquirement_date"])
-                                : (DateTime?)null;
-                            CurrentPageTextBox.Text = reader["current_page"].ToString();
-                            TotalPagesTextBox.Text = reader["total_pages"].ToString();
-                            TotalReadsTextBox.Text = reader["total_reads"].ToString();
-                            PublisherComboBox.SelectedValue = reader["publisher_id"];
-                            KeywordsTextBox.Text = reader["keywords"].ToString();
-                            DescriptionTextBox.Text = reader["description"].ToString();
-                            NotesTextBox.Text = reader["notes"].ToString();
-                            OwnershipStateComboBox.SelectedValue = reader["ownership_state"];
-                            ReadingStateReading.IsChecked = (int)reader["reading_state"] == 3;
-                            ReadingStateNotReading.IsChecked = (int)reader["reading_state"] == 4;
-                            if (reader["rating"] == DBNull.Value)
-                            {
-                                IsRatedCheckBox.IsChecked = false;
-                                RatingSlider.IsEnabled = false;
-                            } else
-                                RatingSlider.Value = (int)reader["rating"];
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Chyba při načítání údajů!\n Error: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-                Close();
-            }
-        }
-
-        private void LoadComboBoxOptions()
-        {
-            try
-            {
-                using (FbConnection connection = new FbConnection(_connectionString))
-                {
-                    connection.Open();
-                    LoadComboBoxData(connection, AuthorComboBox, "SELECT id, name || ' ' || surname AS full_name FROM Author");
-                    LoadComboBoxData(connection, PublisherComboBox, "SELECT id, name FROM Publisher");
-                    LoadComboBoxData(connection, OwnershipStateComboBox, "SELECT id, name FROM State");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($" Chyba při načítání možností!\n Error: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void LoadComboBoxData(FbConnection connection, System.Windows.Controls.ComboBox comboBox, string query)
-        {
-            var dictionary = new Dictionary<int, string>();
-            using (var command = new FbCommand(query, connection))
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    int id = reader.GetInt32(0);
-                    string name = reader.GetString(1);
-                    if (name == "Čtu" || name == "Nečtu")
-                        continue;
-                    dictionary[id] = name;
-                }
-            }
-            comboBox.ItemsSource = dictionary.ToList();
-            comboBox.DisplayMemberPath = "Value";
-            comboBox.SelectedValuePath = "Key";
-        }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            Book? book = this.DataContext as Book;
+
+            if (book is not null)
             {
-                using (FbConnection connection = new FbConnection(_connectionString))
+                BookModel bookModel = new BookModel();
+                bool saveSuccess;
+
+                if (_isEditMode)
+                    saveSuccess = bookModel.UpdateBook(book);
+                else
+                    saveSuccess = bookModel.AddNewBook(book);
+
+                if (saveSuccess)
                 {
-                    connection.Open();
-                    string query = _isEditMode ? @"
-                            UPDATE Book SET 
-                                title = @Title, 
-                                author_id = @Author_Id, 
-                                total_pages = @Total_Pages, 
-                                current_page = @Current_Page, 
-                                total_reads = @Total_Reads, 
-                                rating = @Rating, 
-                                acquirement_date = @Acquirement_Date, 
-                                publisher_id = @Publisher_Id, 
-                                keywords = @Keywords, 
-                                description = @Description, 
-                                notes = @Notes,
-                                reading_state = @Reading_State,
-                                ownership_state = @Ownership_State
-                            WHERE id = @Id"
-                            : @"
-                            INSERT INTO Book (title, author_id, total_pages, current_page, total_reads, rating, acquirement_date, publisher_id, keywords, description, notes, reading_state, ownership_state)
-                                VALUES (@Title, @Author_Id, @Total_Pages, 0, 0, null, @Acquirement_Date, @Publisher_Id, @Keywords, @Description, @Notes, 4, 1)";
-
-                    FbCommand command = new FbCommand(query, connection);
-                    command.Parameters.AddWithValue("@Title", TitleTextBox.Text);
-                    command.Parameters.AddWithValue("@Author_Id", AuthorComboBox.SelectedValue);
-                    command.Parameters.AddWithValue("@Total_Pages", TotalPagesTextBox.Text);
-                    command.Parameters.AddWithValue("@Current_Page", CurrentPageTextBox.Text);
-                    command.Parameters.AddWithValue("@Total_Reads", TotalReadsTextBox.Text);
-                    command.Parameters.AddWithValue("@Rating", IsRatedCheckBox.IsChecked == false ? DBNull.Value : RatingSlider.Value);
-                    command.Parameters.AddWithValue("@Acquirement_Date", AcquirementDatePicker.SelectedDate.HasValue
-                        ? (object)AcquirementDatePicker.SelectedDate.Value
-                        : DBNull.Value);
-                    command.Parameters.AddWithValue("@Publisher_Id", PublisherComboBox.SelectedValue);
-                    command.Parameters.AddWithValue("@Keywords", KeywordsTextBox.Text == "" ? DBNull.Value : KeywordsTextBox.Text);
-                    command.Parameters.AddWithValue("@Description", DescriptionTextBox.Text);
-                    command.Parameters.AddWithValue("@Notes", NotesTextBox.Text);
-                    command.Parameters.AddWithValue("@Reading_State", ReadingStateReading.IsChecked == true ? 3 : 4);
-                    command.Parameters.AddWithValue("@Ownership_State", OwnershipStateComboBox.SelectedValue);
-
                     if (_isEditMode)
-                        command.Parameters.AddWithValue("@Id", _bookId);
+                    {
+                        MessageBox.Show(
+                            $"Změny na knížce '{book.Title}' byly úspěšně uloženy!",
+                            "Úspěch",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show(
+                            $"Nová kniha '{book.Title}' byla úspěšně uložena!",
+                            "Úspěch",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                    }
 
-                    command.ExecuteNonQuery();
+                    DialogResult = true;
+                    Close();
                 }
-
-                MessageBox.Show("Úspěšně uloženo!", "Úspěch", MessageBoxButton.OK, MessageBoxImage.Information);
-                DialogResult = true;
-                Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Chyba při ukládání!\n Error: {ex.Message}", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                else
+                    MessageBox.Show("Kniha nebyla uložena", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void ValidateInput(object sender, RoutedEventArgs e)
+        {
+            SaveButton.IsEnabled = CanSave();
+        }
+
+        private bool CanSave() // todo
+        {   
+            return true;
+        }
+
+
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
@@ -222,48 +116,55 @@ namespace BookDb
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_book == null)
+                return;
+
             MessageBoxResult result = MessageBox.Show(
-                $" Opravdu chcete smazat knihu?",
+                $"Opravdu chcete smazat knihu '{_book.Title}'?",
                 "Potvrzení smazání",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
 
             if (result == MessageBoxResult.Yes)
             {
-                try
-                {
-                    using (FbConnection connection = new FbConnection(_connectionString))
-                    {
-                        connection.Open();
+                BookModel bookModel = new BookModel();
 
-                        string deleteQuery = "DELETE FROM Book WHERE id = @BookId";
-                        FbCommand command = new FbCommand(deleteQuery, connection);
-                        command.Parameters.AddWithValue("@BookId", _bookId);
-                        command.ExecuteNonQuery();
+                bool deleteSuccess = bookModel.DeleteBook((int)_book.Id);
 
-                        MessageBox.Show(
-                            $" Proběhlo smazání knihy",
-                            "Úspěch",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                }
-                catch (Exception ex)
+                if (deleteSuccess)
                 {
                     MessageBox.Show(
-                        $" Chyba při mazání knihy:\n Error: {ex.Message}",
+                        $"Kniha '{_book.Title}' byla úspěšně smazána!",
+                        "Úspěch",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Kniha '{_book.Title}' se nepodařilo smazat.",
                         "Chyba",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
+
+                DialogResult = true;
+                Close();
+
             }
-            DialogResult = true;
-            Close();
         }
 
         private void IsRatedCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            RatingSlider.IsEnabled = IsRatedCheckBox.IsChecked == true;
+            if (IsRatedCheckBox.IsChecked == true)
+            {
+                RatingSlider.IsEnabled = true;
+            }
+            else
+            {
+                RatingSlider.IsEnabled = false;
+                _book.Rating = null;
+            }
         }
     }
 }
