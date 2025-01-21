@@ -36,10 +36,10 @@ CREATE TABLE Book (
     total_pages INTEGER,
     current_page INTEGER,
     total_reads INTEGER DEFAULT 0,
+    rating INTEGER CHECK (rating BETWEEN 0 AND 10),
+    keywords VARCHAR(500) CHARACTER SET UTF8,
     notes BLOB SUB_TYPE TEXT CHARACTER SET UTF8,
     description BLOB SUB_TYPE TEXT CHARACTER SET UTF8,
-    keywords VARCHAR(500) CHARACTER SET UTF8,
-    rating INTEGER CHECK (rating BETWEEN 0 AND 10),
     author_id INTEGER NOT NULL,
     publisher_id INTEGER NOT NULL,
     reading_state INTEGER REFERENCES ReadingState (id) ON DELETE SET NULL,
@@ -51,12 +51,12 @@ CREATE TABLE Book (
 -- Insert predefined ownership states
 INSERT INTO OwnershipState (name, color) VALUES ('Vlastním', '#00ff00');	-- Green
 INSERT INTO OwnershipState (name, color) VALUES ('Nevlastním', '#ff0000');	-- Red
-INSERT INTO OwnershipState (name, color) VALUES ('Půjčeno', '#ffff00');		-- Yellow
-INSERt INTO OwnershipState (name, color) VALUES ('Prodáno', '#ff5f00');		-- Orange
+INSERT INTO OwnershipState (name, color) VALUES ('Půjčeno', '#ffff00');	-- Yellow
+INSERt INTO OwnershipState (name, color) VALUES ('Prodáno', '#ff5f00');	-- Orange
 
 -- Insert predefined reading states
 INSERT INTO ReadingState (name, color) VALUES ('Aktivně čtu', '#00ff00');	-- Green
-INSERT INTO ReadingState (name, color) VALUES ('Rozečteno', '#ffff00');		-- Yellow
+INSERT INTO ReadingState (name, color) VALUES ('Rozečteno', '#ffff00');	-- Yellow
 INSERT INTO ReadingState (name, color) VALUES ('Nechci číst', '#ff0000');	-- Red
 INSERT INTO ReadingState (name, color) VALUES ('Chci přečíst', '#ff5f00');	-- Orange
 
