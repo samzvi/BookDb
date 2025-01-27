@@ -13,19 +13,37 @@ namespace BookDb
         private readonly AuthorModel _authorModel = new();
         private readonly PublisherModel _publisherModel = new();
         private readonly StateModel _stateModel = new();
-        private Book? _book;
+        private readonly Book _temporaryBook;
 
 
-        public BookManagementWindow(string connectionString, bool isEditMode, Book? book = null)
+        public BookManagementWindow(string connectionString, bool isEditMode, Book? originalBook = null)
         {
             InitializeComponent();
 
             _isEditMode = isEditMode;
 
-            if (_isEditMode && book != null)
+            if (_isEditMode && originalBook != null)
             {
-                _book = book;
-                DataContext = _book;
+                _temporaryBook = new Book
+                {
+                    Id = originalBook.Id,
+                    Title = originalBook.Title,
+                    AuthorId = originalBook.AuthorId,
+                    PublisherId = originalBook.PublisherId,
+                    AcquirementDate = originalBook.AcquirementDate,
+                    TotalPages = originalBook.TotalPages,
+                    CurrentPage = originalBook.CurrentPage,
+                    TotalReads = originalBook.TotalReads,
+                    Rating = originalBook.Rating,
+                    Keywords = originalBook.Keywords,
+                    Notes = originalBook.Notes,
+                    Description = originalBook.Description,
+                    ReadingState = originalBook.ReadingState,
+                    OwnershipState = originalBook.OwnershipState
+                };
+
+                DataContext = _temporaryBook;
+
 
                 Title = "Upravit knihu";
                 TitleLabel.Content = "Upravit knihu";
@@ -33,8 +51,8 @@ namespace BookDb
             }
             else
             {
-                _book = new();
-                DataContext = _book;
+                _temporaryBook = new Book();
+                DataContext = _temporaryBook;
 
                 Title = "Přidat knihu";
                 TitleLabel.Content = "Přidat knihu";
@@ -42,6 +60,7 @@ namespace BookDb
 
             }
 
+            IsRatedHelper();
             LoadComboBoxes();
         }
 
@@ -57,24 +76,23 @@ namespace BookDb
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            Book? book = this.DataContext as Book;
 
-            if (book is not null)
+            if (_temporaryBook is not null)
             {
                 BookModel bookModel = new BookModel();
                 bool saveSuccess;
 
                 if (_isEditMode)
-                    saveSuccess = bookModel.UpdateBook(book);
+                    saveSuccess = bookModel.UpdateBook(_temporaryBook);
                 else
-                    saveSuccess = bookModel.AddNewBook(book);
+                    saveSuccess = bookModel.AddNewBook(_temporaryBook);
 
                 if (saveSuccess)
                 {
                     if (_isEditMode)
                     {
                         MessageBox.Show(
-                            $"Změny na knížce '{book.Title}' byly úspěšně uloženy!",
+                            $"Změny na knížce '{_temporaryBook.Title}' byly úspěšně uloženy!",
                             "Úspěch",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
@@ -82,7 +100,7 @@ namespace BookDb
                     else
                     {
                         MessageBox.Show(
-                            $"Nová kniha '{book.Title}' byla úspěšně uložena!",
+                            $"Nová kniha '{_temporaryBook.Title}' byla úspěšně uložena!",
                             "Úspěch",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information);
@@ -99,16 +117,17 @@ namespace BookDb
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
+            
             Close();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            if (_book == null)
+            if (_temporaryBook == null)
                 return;
 
             MessageBoxResult result = MessageBox.Show(
-                $"Opravdu chcete smazat knihu '{_book.Title}'?",
+                $"Opravdu chcete smazat knihu '{_temporaryBook.Title}'?",
                 "Potvrzení smazání",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning);
@@ -117,12 +136,12 @@ namespace BookDb
             {
                 BookModel bookModel = new BookModel();
 
-                bool deleteSuccess = bookModel.DeleteBook((int)_book.Id);
+                bool deleteSuccess = bookModel.DeleteBook((int)_temporaryBook.Id);
 
                 if (deleteSuccess)
                 {
                     MessageBox.Show(
-                        $"Kniha '{_book.Title}' byla úspěšně smazána!",
+                        $"Kniha '{_temporaryBook.Title}' byla úspěšně smazána!",
                         "Úspěch",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
@@ -130,7 +149,7 @@ namespace BookDb
                 else
                 {
                     MessageBox.Show(
-                        $"Kniha '{_book.Title}' se nepodařilo smazat.",
+                        $"Kniha '{_temporaryBook.Title}' se nepodařilo smazat.",
                         "Chyba",
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
@@ -144,15 +163,25 @@ namespace BookDb
 
         private void IsRatedCheckBox_Click(object sender, RoutedEventArgs e)
         {
-            if (IsRatedCheckBox.IsChecked == true)
+            IsRatedHelper();
+        }
+
+        private void IsRatedHelper()
+        {
+            if (IsRatedCheckBox.IsChecked == true || _temporaryBook.Rating is not null)
             {
                 RatingSlider.IsEnabled = true;
             }
             else
             {
                 RatingSlider.IsEnabled = false;
-                _book.Rating = null;
+                _temporaryBook.Rating = null;
             }
+        }
+
+        private void NumericOnly_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            e.Handled = !int.TryParse(e.Text, out _);
         }
     }
 }

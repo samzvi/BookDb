@@ -1,9 +1,8 @@
 ﻿using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
-using System.Windows.Media;
+using BookDb.Converters;
 using BookDb.Models;
 
 namespace BookDb
@@ -58,11 +57,15 @@ namespace BookDb
                 book.Title,
                 AuthorName = $"{book.Author.Name} {book.Author.Surname}",
                 PublisherName = book.Publisher.Name,
-                AcquirementDate = book.AcquirementDate?.ToString("d"),
+                AcquirementDate = book.AcquirementDate == null
+                                ? "Neznámé"
+                                : book.AcquirementDate?.ToString("d"),
                 OnPageTotal = book.CurrentPage == null
-                              ? $"0 z {book.TotalPages}"
-                              : $"{book.CurrentPage} z {book.TotalPages}",
-                book.TotalReads,
+                                ? $"0 z {book.TotalPages}"
+                                : $"{book.CurrentPage} z {book.TotalPages}",
+                TotalReads = book.TotalReads == null
+                                ? "Nepřečteno"
+                                : book.TotalReads.ToString(),
                 Rating = (book.Rating == null || book.Rating == 0) ? "Nehodnoceno" : $"{book.Rating} z 10",
                 ReadingColor = stateModel.ReadingStates.FirstOrDefault(state => state.Id == book.ReadingState).Color,
                 ReadingName = stateModel.ReadingStates.FirstOrDefault(state => state.Id == book.ReadingState).Name,

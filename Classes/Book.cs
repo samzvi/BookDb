@@ -8,17 +8,21 @@ namespace BookDb
     public class Book : INotifyPropertyChanged, IDataErrorInfo
     {
         public event PropertyChangedEventHandler? PropertyChanged;
+
         private readonly Dictionary<string, Func<string?>> _validationRules;
         public Book()
         {
-            // Define validation rules in one place
             _validationRules = new Dictionary<string, Func<string?>>
             {
-                { nameof(Title), () => string.IsNullOrWhiteSpace(Title) ? "Název nesmí být prázdný" : null },
+                { nameof(Title), () => string.IsNullOrWhiteSpace(Title)
+                                    ? "Název nesmí být prázdný"
+                                    : (Title.Length > 255
+                                        ? "Název je moc dlouhý"
+                                        : null)},
                 { nameof(AuthorId), () => AuthorId is null ? "Vyber autora" : null },
                 { nameof(ReadingState), () => ReadingState is null ? "Vyber stav čtení" : null },
                 { nameof(OwnershipState), () => OwnershipState is null ? "Vyber stav vlastnictví" : null },
-                { nameof(TotalPages), () => TotalPages is null ? "Zadej kolik ma kniha stran" : null },
+                { nameof(TotalPages), () => TotalPages is null ? "Zadej kolik má kniha stran" : null },
                 { nameof(PublisherId), () => PublisherId is null ? "Vyber vydavatele" : null }
             };
         }
@@ -36,7 +40,6 @@ namespace BookDb
 
         public string Error => string.Join(Environment.NewLine, _validationRules.Values.Select(validate => validate()).Where(error => !string.IsNullOrEmpty(error)));
 
-        // This property can be used in the UI to disable/enable Save Button
         public bool CanSave => string.IsNullOrEmpty(Error);
 
         private int? _id;
