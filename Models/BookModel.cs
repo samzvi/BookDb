@@ -83,14 +83,11 @@ namespace BookDb.Models
                         connection.Open();
                         command.ExecuteNonQuery();
 
-                        return true;
                     }
+                    return true;
                 }
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
         public bool UpdateBook(Book updatedBook)
@@ -140,10 +137,7 @@ namespace BookDb.Models
                     }
                 }
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
         public bool DeleteBook(int bookId)
@@ -162,10 +156,7 @@ namespace BookDb.Models
                     return true;
                 }
             }
-            catch (Exception)
-            {
-                return false;
-            }
+            catch { return false; }
         }
 
     }

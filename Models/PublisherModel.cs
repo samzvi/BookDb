@@ -1,9 +1,11 @@
-﻿using System.Data;
+﻿// PublisherModel.cs
+using System.Data;
 using FirebirdSql.Data.FirebirdClient;
+using System.Collections.Generic;
 
 namespace BookDb.Models
 {
-    class PublisherModel
+    public class PublisherModel
     {
         private readonly string ConnectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
 
@@ -17,28 +19,68 @@ namespace BookDb.Models
 
         public void FetchPublishers()
         {
-            using (FbConnection connection = new FbConnection(ConnectionString))
+            Publishers.Clear();
+            using (var connection = new FbConnection(ConnectionString))
             {
                 connection.Open();
 
-                string query = @"SELECT * FROM Publisher;";
-
-                FbCommand command = new FbCommand(query, connection);
-                FbDataAdapter adapter = new FbDataAdapter(command);
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
-
-                foreach (DataRow row in dataTable.Rows)
+                string query = "SELECT * FROM Publisher;";
+                using (var command = new FbCommand(query, connection))
                 {
-                    Publisher publisher = new()
+                    using (var reader = command.ExecuteReader())
                     {
-                        Id = row["id"] as int?,
-                        Name = row["name"] as string
-                    };
-
-                    Publishers.Add(publisher);
+                        while (reader.Read())
+                        {
+                            Publishers.Add(new Publisher
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Name = reader.GetString(reader.GetOrdinal("name"))
+                            });
+                        }
+                    }
                 }
             }
+        }
+
+        public bool AddPublisher(Publisher publisher)
+        {
+            try
+            {
+                using (var connection = new FbConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    string query = "INSERT INTO Publisher (name) VALUES (@Name);";
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Name", publisher.Name);
+                        command.ExecuteNonQuery();
+                    }
+                    return true;
+                }
+            }
+            catch { return false; }
+        }
+
+        public bool UpdatePublisher(Publisher publisher)
+        {
+            try
+            {
+                using (var connection = new FbConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    string query = "UPDATE Publisher SET name = @Name WHERE id = @Id;";
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Name", publisher.Name);
+                        command.Parameters.AddWithValue("@Id", publisher.Id);
+                        command.ExecuteNonQuery();
+                    }
+                    return true;
+                }
+            }
+            catch { return false; }
         }
     }
 }

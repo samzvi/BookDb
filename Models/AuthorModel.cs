@@ -1,10 +1,11 @@
-﻿using System.Data;
+﻿// AuthorModel.cs
+using System.Data;
 using FirebirdSql.Data.FirebirdClient;
-using static System.Reflection.Metadata.BlobBuilder;
+using System.Collections.Generic;
 
 namespace BookDb.Models
 {
-    class AuthorModel
+    public class AuthorModel
     {
         private readonly string ConnectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
 
@@ -18,29 +19,72 @@ namespace BookDb.Models
 
         public void FetchAuthors()
         {
-            using (FbConnection connection = new FbConnection(ConnectionString))
+            Authors.Clear();
+            using (var connection = new FbConnection(ConnectionString))
             {
                 connection.Open();
 
-                string query = @"SELECT * FROM Author;";
-
-                FbCommand command = new FbCommand(query, connection);
-                FbDataAdapter adapter = new FbDataAdapter(command);
-                DataTable dataTable = new DataTable();
-                adapter.Fill(dataTable);
-
-                foreach (DataRow row in dataTable.Rows)
+                string query = "SELECT * FROM Author;";
+                using (var command = new FbCommand(query, connection))
                 {
-                    Author author = new()
+                    using (var reader = command.ExecuteReader())
                     {
-                        Id = row["id"] as int?,
-                        Name = row["name"] as string,
-                        Surname = row["surname"] as string
-                    };
-
-                    Authors.Add(author);
+                        while (reader.Read())
+                        {
+                            Authors.Add(new Author
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("id")),
+                                Name = reader.GetString(reader.GetOrdinal("name")),
+                                Surname = reader.GetString(reader.GetOrdinal("surname"))
+                            });
+                        }
+                    }
                 }
             }
+        }
+
+        public bool AddAuthor(Author author)
+        {
+            try
+            {
+                using (var connection = new FbConnection(ConnectionString))
+                {
+
+                    string query = "INSERT INTO Author (name, surname) VALUES (@Name, @Surname);";
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Name", author.Name);
+                        command.Parameters.AddWithValue("@Surname", author.Surname);
+                        
+                        connection.Open();
+                        command.ExecuteNonQuery();
+                    }
+                    return true;
+                }
+            }
+            catch { return false; }
+        }
+
+        public bool UpdateAuthor(Author author)
+        {
+            try
+            {
+                using (var connection = new FbConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    string query = "UPDATE Author SET name = @Name, surname = @Surname WHERE id = @Id;";
+                    using (var command = new FbCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Name", author.Name);
+                        command.Parameters.AddWithValue("@Surname", author.Surname);
+                        command.Parameters.AddWithValue("@Id", author.Id);
+                        command.ExecuteNonQuery();
+                    }
+                    return true;
+                }
+            }
+            catch { return false; }
         }
     }
 }

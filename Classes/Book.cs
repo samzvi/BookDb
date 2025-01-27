@@ -112,6 +112,7 @@ namespace BookDb
                 {
                     _currentPage = value;
                     OnPropertyChanged(nameof(CurrentPage));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -126,6 +127,7 @@ namespace BookDb
                 {
                     _totalReads = value;
                     OnPropertyChanged(nameof(TotalReads));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -140,6 +142,7 @@ namespace BookDb
                 {
                     _rating = value;
                     OnPropertyChanged(nameof(Rating));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -154,6 +157,7 @@ namespace BookDb
                 {
                     _keywords = value;
                     OnPropertyChanged(nameof(Keywords));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -168,6 +172,7 @@ namespace BookDb
                 {
                     _notes = value;
                     OnPropertyChanged(nameof(Notes));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
@@ -182,6 +187,7 @@ namespace BookDb
                 {
                     _description = value;
                     OnPropertyChanged(nameof(Description));
+                    OnPropertyChanged(nameof(CanSave));
                 }
             }
         }

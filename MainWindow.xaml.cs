@@ -90,9 +90,15 @@ namespace BookDb
             }
         }
 
-        private void CreateAuthorButton_Click(object sender, RoutedEventArgs e)
+        private void AuthorsPublishersButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Vytvoření autora není implementováno.", "Informace", MessageBoxButton.OK, MessageBoxImage.Information);
+            var autPubWindow = new AuthorsPublishersWindow();
+            bool? dialogResult = autPubWindow.ShowDialog();
+
+            if (dialogResult == true)
+            {
+                LoadDefaultView();
+            }
         }
 
         private void ShowDetailsButton_Click(object sender, RoutedEventArgs e)

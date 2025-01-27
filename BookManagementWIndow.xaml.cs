@@ -79,7 +79,7 @@ namespace BookDb
 
             if (_temporaryBook is not null)
             {
-                BookModel bookModel = new BookModel();
+                BookModel bookModel = new();
                 bool saveSuccess;
 
                 if (_isEditMode)
