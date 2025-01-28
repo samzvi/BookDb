@@ -12,8 +12,8 @@ namespace BookDb
         private readonly string dbPath = @"D:/fbdata/BOOKSDB.fdb";
         private readonly string dbInitPath = @"..\..\..\db\DbInitialize.bat";
         private readonly string connectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
-        private BookModel? bookModel;
-        private StateModel? stateModel;
+        private BookModel bookModel;
+        private StateModel stateModel;
 
         public MainWindow()
         {
@@ -74,8 +74,9 @@ namespace BookDb
                 book.Keywords,
                 book.Description,
                 book.Notes
-            }).ToList(); BooksDataGrid.ItemsSource = null;
+            }).ToList(); 
 
+            BooksDataGrid.ItemsSource = null;
             BooksDataGrid.ItemsSource = booksWithDetails;
         }
 
@@ -93,12 +94,9 @@ namespace BookDb
         private void AuthorsPublishersButton_Click(object sender, RoutedEventArgs e)
         {
             var autPubWindow = new AuthorsPublishersWindow();
-            bool? dialogResult = autPubWindow.ShowDialog();
+            autPubWindow.ShowDialog();
 
-            if (dialogResult == true)
-            {
-                LoadDefaultView();
-            }
+            LoadDefaultView();
         }
 
         private void ShowDetailsButton_Click(object sender, RoutedEventArgs e)

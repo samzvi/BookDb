@@ -26,7 +26,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="50" />
             <RowDefinition Height="50" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Label x:Name="TitleLabel"
@@ -48,11 +48,30 @@
                  Text="{Binding Surname, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
                  Style="{StaticResource TextBoxStyle}" />
 
-        <StackPanel Orientation="Horizontal" Grid.Row="3" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Uložit" Width="100" Margin="5" Padding="5" FontSize="14"
-                    Click="SaveButton_Click"
-                    IsEnabled="{Binding CanSave}" />
-            <Button Content="Zavřít" Width="100" Margin="5" Padding="5" FontSize="14" Click="CancelButton_Click" />
-        </StackPanel>
+        <DockPanel Grid.Row="3" Margin="0,10,0,0" VerticalAlignment="Bottom">
+            <Button x:Name="DeleteButton"
+                    Content="Smazat" 
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    Padding="5"
+                    FontSize="9"
+                    FontWeight="DemiBold"
+                    Click="DeleteButton_Click" />
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                <Button Content="Uložit" 
+                        Margin="0, 0, 10, 0"
+                        Width="100"
+                        Height="30"
+                        FontSize="14"
+                        Click="SaveButton_Click"
+                        IsEnabled="{Binding CanSave}" />
+                <Button Content="Zavřít" 
+                        HorizontalAlignment="Right"
+                        Width="100"
+                        Height="30"
+                        FontSize="14"
+                        Click="CancelButton_Click" />
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>

@@ -1,7 +1,6 @@
-﻿// AuthorModel.cs
-using System.Data;
+﻿using System.Text;
+using System.Windows;
 using FirebirdSql.Data.FirebirdClient;
-using System.Collections.Generic;
 
 namespace BookDb.Models
 {
@@ -24,7 +23,7 @@ namespace BookDb.Models
             {
                 connection.Open();
 
-                string query = "SELECT * FROM Author;";
+                string query = @"SELECT * FROM Author;";
                 using (var command = new FbCommand(query, connection))
                 {
                     using (var reader = command.ExecuteReader())
@@ -43,14 +42,14 @@ namespace BookDb.Models
             }
         }
 
-        public bool AddAuthor(Author author)
+        public bool Add(Author author)
         {
             try
             {
                 using (var connection = new FbConnection(ConnectionString))
                 {
 
-                    string query = "INSERT INTO Author (name, surname) VALUES (@Name, @Surname);";
+                    string query = @"INSERT INTO Author (name, surname) VALUES (@Name, @Surname);";
                     using (var command = new FbCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Name", author.Name);
@@ -65,7 +64,7 @@ namespace BookDb.Models
             catch { return false; }
         }
 
-        public bool UpdateAuthor(Author author)
+        public bool Update(Author author)
         {
             try
             {
@@ -73,7 +72,10 @@ namespace BookDb.Models
                 {
                     connection.Open();
 
-                    string query = "UPDATE Author SET name = @Name, surname = @Surname WHERE id = @Id;";
+                    string query = @"UPDATE Author SET 
+                                        name = @Name, 
+                                        surname = @Surname
+                                    WHERE id = @Id;";
                     using (var command = new FbCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Name", author.Name);
@@ -82,6 +84,52 @@ namespace BookDb.Models
                         command.ExecuteNonQuery();
                     }
                     return true;
+                }
+            }
+            catch { return false; }
+        }
+
+        public bool? Delete(int? authorId)
+        {
+            try
+            {
+                using (FbConnection connection = new FbConnection(ConnectionString))
+                {
+                    connection.Open();
+
+                    string query = "SELECT title FROM Book WHERE author_id = @AuthorId";
+                    FbCommand command = new(query, connection);
+                    command.Parameters.AddWithValue("@AuthorId", authorId);
+
+                    using (FbDataReader reader = command.ExecuteReader())
+                    {
+                        StringBuilder titles = new StringBuilder();
+
+                        while (reader.Read())
+                        {
+                            titles.AppendLine($"- '{reader.GetString(0)}'");
+                        }
+
+
+                        if (titles.Length > 0)
+                        {
+                            MessageBoxResult result = 
+                            MessageBox.Show($"Autor je přiřazen k některým knihám!\nJeho smazáním dojde ke smazání těchto knih:\n\n" +
+                                            $"{titles}\nPřejete si pokračovat?",
+                                            "Autor s referencí",
+                                            MessageBoxButton.YesNo,
+                                            MessageBoxImage.Warning);
+                            if (result == MessageBoxResult.No)
+                                return null;
+                        }
+
+                        query = "DELETE FROM Author WHERE id = @AuthorId";
+                        command = new FbCommand(query, connection);
+                        command.Parameters.AddWithValue("@AuthorId", authorId);
+                        command.ExecuteNonQuery();
+
+                        return true;
+                    }
                 }
             }
             catch { return false; }

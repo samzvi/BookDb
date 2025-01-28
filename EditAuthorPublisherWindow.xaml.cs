@@ -9,13 +9,15 @@ namespace BookDb
         private Author? _temporaryAuthor;
         private Publisher? _temporaryPublisher;
         private readonly bool _isEditMode;
+        private bool _isAuthor;
 
         public EditAuthorPublisherWindow(bool isEditMode, Author? originalAuthor = null, Publisher? originalPublisher = null)
         {
             InitializeComponent();
             _isEditMode = isEditMode;
+            _isAuthor = originalAuthor is not null;
 
-            if (originalAuthor != null)
+            if (_isAuthor)
             {
                 _temporaryAuthor = new Author
                 {
@@ -24,12 +26,9 @@ namespace BookDb
                     Surname = originalAuthor.Surname
                 };
                 DataContext = _temporaryAuthor;
-                Title = isEditMode ? "Nový autor" : "Upravit autora";
-
-                SurnameLabel.Visibility = Visibility.Visible;
-                SurnameTextBox.Visibility = Visibility.Visible;
             }
-            else if (originalPublisher != null)
+
+            else
             {
                 _temporaryPublisher = new Publisher
                 {
@@ -37,92 +36,110 @@ namespace BookDb
                     Name = originalPublisher.Name
                 };
                 DataContext = _temporaryPublisher;
-                Title = isEditMode ? "Nový vydavatel" : "Upravit vydavatele";
+            }
 
-                SurnameLabel.Visibility = Visibility.Collapsed;
-                SurnameTextBox.Visibility = Visibility.Collapsed;
+            SetEditElements();
+        }
+
+        private void SetEditElements()
+        {
+            DeleteButton.Visibility = _isEditMode ? Visibility.Visible : Visibility.Collapsed;
+
+            SurnameLabel.Visibility = _isAuthor ? Visibility.Visible : Visibility.Collapsed;
+            SurnameTextBox.Visibility = _isAuthor ? Visibility.Visible : Visibility.Collapsed;
+
+            if (_isAuthor)
+            {
+                Title = _isEditMode ? "Upravit autora" : "Nový autor";
+                TitleLabel.Content = _isEditMode ? "Upravit autora" : "Nový autor";
+            }
+            else
+            {
+                Title = _isEditMode ? "Upravit vydavatele" : "Nový vydavatel";
+                TitleLabel.Content = _isEditMode ? "Upravit vydavatele" : "Nový vydavatel";
             }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            bool saveSuccess;
+            bool isSuccessful;
 
-            if (_temporaryAuthor is not null)
+            if (_isAuthor)
             {
-                AuthorModel authorModel = new();
-        
-                if (_isEditMode)
-                    saveSuccess = authorModel.AddAuthor(_temporaryAuthor);
-                else
-                    saveSuccess = authorModel.UpdateAuthor(_temporaryAuthor);
-
-                if (saveSuccess)
-                {
-                    if (_isEditMode)
-                    {
-                        MessageBox.Show(
-                            $"Změny byly úspěšně uloženy!",
-                            "Úspěch",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show(
-                            $"Nový autor byl úspěšně vytvořen",
-                            "Úspěch",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                }
-                else
-                    MessageBox.Show("Autor nebyl uložen\nNeznámá chyba", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                var model = new AuthorModel();
+                isSuccessful = _isEditMode
+                    ? model.Update(_temporaryAuthor)
+                    : model.Add(_temporaryAuthor);
+            }
+            else
+            {
+                var model = new PublisherModel();
+                isSuccessful = _isEditMode
+                    ? model.Update(_temporaryPublisher)
+                    : model.Add(_temporaryPublisher);
             }
 
-
-            if (_temporaryPublisher is not null)
+            if (isSuccessful)
             {
-                PublisherModel PublisherModel = new();
-
                 if (_isEditMode)
-                    saveSuccess = PublisherModel.AddPublisher(_temporaryPublisher);
-                else
-                    saveSuccess = PublisherModel.UpdatePublisher(_temporaryPublisher);
-
-                if (saveSuccess)
                 {
-                    if (_isEditMode)
-                    {
-                        MessageBox.Show(
-                            $"Změny byly úspěšně uloženy!",
-                            "Úspěch",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                    else
-                    {
-                        MessageBox.Show(
-                            $"Nový autor byl úspěšně vytvořen",
-                            "Úspěch",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-                    }
-                    DialogResult = true;
+                    MessageBox.Show(
+                        $"Změny byly úspěšně uloženy!",
+                        "Úspěch",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
                 else
                 {
-                    DialogResult = false;
-                    MessageBox.Show("Autor nebyl uložen\nNeznámá chyba", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        $"Nový {(_isAuthor ? "autor" : "vydavatel")} byl úspěšně vytvořen",
+                        "Úspěch",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 }
             }
+            else
+                MessageBox.Show($"{(_isAuthor ? "Autor" : "Vydavatel")} nebyl uložen\nNeznámá chyba", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
 
             Close();
         }
 
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result =
+                MessageBox.Show($"Opravdu si přejete smazat tohto {(_isAuthor ? "autora" : "vydavatele")}?",
+                                "Potvrzení smazání",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                bool? isSuccessful;
+                dynamic model;
+
+                model = _isAuthor
+                    ? new AuthorModel()
+                    : new PublisherModel();
+
+                int? objectId = 0;
+
+                objectId = _isAuthor
+                    ? _temporaryAuthor.Id
+                    : _temporaryPublisher.Id;
+
+                isSuccessful = model.Delete(objectId);
+
+                if (isSuccessful is true)
+                {
+                    MessageBox.Show($"{(_isAuthor ? "Autor" : "Vydavatel")} byl úspěšně smazán", "Úspěch", MessageBoxButton.OK, MessageBoxImage.Information);
+                    Close();
+                }
+                else if (isSuccessful is false)
+                    MessageBox.Show($"{(_isAuthor ? "Autor" : "Vydavatel")} nebyl smazán\nNeznámá chyba", "Chyba", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
             Close();
         }
     }
