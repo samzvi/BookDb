@@ -1,9 +1,11 @@
 ﻿<Window x:Class="BookDb.MainWindow"
+        x:Name="WindowMain"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Moje Knihovna" MinHeight="450" Height="450" MinWidth="1300" Width="1500" Icon="pack://application:,,,/Sources/library.png">
+        Title="Moje Knihovna" MinHeight="600" Height="600" MinWidth="1300" Width="1500" Icon="pack://application:,,,/Sources/library.png">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -11,7 +13,15 @@
 
         <Label x:Name="TitleLabel" Content="Moje Knihovna" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="10" />
 
-        <DataGrid Name="BooksDataGrid" Background="{x:Null}" Grid.Row="1" AutoGenerateColumns="False" Margin="5" IsReadOnly="True" SelectionMode="Single">
+        <DataGrid Name="BooksDataGrid" 
+                  Background="{x:Null}"
+                  CanUserResizeRows="False"
+                  Grid.Row="1"
+                  AutoGenerateColumns="False"
+                  Margin="5" 
+                  IsReadOnly="True"
+                  SelectedCellsChanged="CellFocused"
+                  SelectionMode="Single">
             <DataGrid.Resources>
                 <Style x:Key="TextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
@@ -68,7 +78,7 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Klíčová slova" Binding="{Binding Keywords}" MinWidth="200" ElementStyle="{StaticResource TextBlockStyle}" />
-                <DataGridTextColumn Header="Popis" Binding="{Binding Description}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Popis" TextOptions.TextFormattingMode="Ideal" Binding="{Binding Description}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTemplateColumn Header="Upravit" Width="50" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
@@ -83,14 +93,42 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-
             </DataGrid.Columns>
-            
         </DataGrid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="2" HorizontalAlignment="Center" Height="40" Margin="5">
+        <StackPanel Orientation="Horizontal" 
+                    Visibility="{Binding PaginationVisibility}"
+                    Grid.Row="2" 
+                    Height="30"
+                    VerticalAlignment="Top" 
+                    HorizontalAlignment="Center" 
+                    Margin="10">
+            <Button Content="&lt;&lt;" 
+                    IsEnabled="{Binding IsPreviousButtonEnabled}"
+                    VerticalAlignment="Stretch"
+                    Click="PreviousPage_Click" 
+                    FontSize="10"
+                    Padding="5, 0, 5, 2"
+                    Margin="5"/>
+            <TextBlock Text="{Binding CurrentPage}" 
+                       Margin="5"
+                       VerticalAlignment="Center"/>
+            <TextBlock Text="/" Margin="5" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding TotalPages}"
+                       Margin="5"
+                       VerticalAlignment="Center"/>
+            <Button Content="&gt;&gt;"
+                    IsEnabled="{Binding IsNextButtonEnabled}"
+                    VerticalAlignment="Stretch"
+                    Click="NextPage_Click" 
+                    FontSize="10"
+                    Padding="5, 0, 5, 2"
+                    Margin="5"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Bottom" HorizontalAlignment="Center" Height="40" Margin="5">
             <Button Name="AddBookButton" Content="Přidat knihu" Width="150" Margin="5" Click="AddBookButton_Click" />
-            <Button Name="CreateAuthorButton" Content="Autoři/Vydavatelé" Width="150" Margin="5" Click="AuthorsPublishersButton_Click" />
+            <Button Name="CreateAuthorButton" Content="Autoři / Vydavatelé" Width="150" Margin="5" Click="AuthorsPublishersButton_Click" />
         </StackPanel>
     </Grid>
 </Window>

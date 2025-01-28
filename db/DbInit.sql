@@ -51,12 +51,12 @@ CREATE TABLE Book (
 -- Insert predefined ownership states
 INSERT INTO OwnershipState (name, color) VALUES ('Vlastním', '#00ff00');	-- Green
 INSERT INTO OwnershipState (name, color) VALUES ('Nevlastním', '#ff0000');	-- Red
-INSERT INTO OwnershipState (name, color) VALUES ('Půjčeno', '#ffff00');	-- Yellow
-INSERt INTO OwnershipState (name, color) VALUES ('Prodáno', '#ff5f00');	-- Orange
+INSERT INTO OwnershipState (name, color) VALUES ('Půjčeno', '#ffff00');		-- Yellow
+INSERt INTO OwnershipState (name, color) VALUES ('Prodáno', '#ff5f00');		-- Orange
 
 -- Insert predefined reading states
 INSERT INTO ReadingState (name, color) VALUES ('Aktivně čtu', '#00ff00');	-- Green
-INSERT INTO ReadingState (name, color) VALUES ('Rozečteno', '#ffff00');	-- Yellow
+INSERT INTO ReadingState (name, color) VALUES ('Rozečteno', '#ffff00');		-- Yellow
 INSERT INTO ReadingState (name, color) VALUES ('Nechci číst', '#ff0000');	-- Red
 INSERT INTO ReadingState (name, color) VALUES ('Chci přečíst', '#ff5f00');	-- Orange
 
@@ -69,6 +69,8 @@ INSERT INTO Publisher (name) VALUES ('Host Brno');
 INSERT INTO Author (name, surname) VALUES ('Karel', 'Čapek');
 INSERT INTO Author (name, surname) VALUES ('Božena', 'Němcová');
 INSERT INTO Author (name, surname) VALUES ('Franz', 'Kafka');
+INSERT INTO Author (name, surname) VALUES ('Milan', 'Kundera');
+INSERT INTO Author (name, surname) VALUES ('Jaroslav', 'Hašek');
 
 -- Insert predefined books
 INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
@@ -80,3 +82,26 @@ VALUES ('Babička', '2025-01-02', 243, 50, 1, 'Nádherná pasáž o přírodě a
 INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
 VALUES ('Proměna', '2025-01-03', 72, 15, 2, 'Intenzivní příběh o proměně a izolaci.', 'Příběh o proměně člověka v hmyz.', 'existencialismus, kafka, povídka', 10, 3, 3, 3, 4);
 
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Žert', '2025-01-10', 240, 0, 0, 'Satirická a podnětná kniha.', 'Román o důsledcích jednoho vtipu.', 'satira, politika, společnost', 8, 4, 1, 1, 1);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Osudy dobrého vojáka Švejka', '2025-01-11', 752, 100, 1, 'Vtipné a absurdní situace.', 'Dobrodružství vojáka během první světové války.', 'humor, válka, satira', 9, 5, 2, 2, 2);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Válka s Mloky', '2025-01-12', 312, 50, 2, 'Velmi poučné o lidské povaze.', 'Román o lidech a inteligentních mlokách.', 'sci-fi, dystopie, Čapek', 9, 1, 3, 3, 3);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Povídky z jedné kapsy', '2025-01-13', 170, 0, 1, 'Zábavné a poutavé příběhy.', 'Sbírka krátkých detektivních povídek.', 'detektivka, záhada, Čapek', 8, 1, 1, 4, 1);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Kniha smíchu a zapomnění', '2025-01-14', 267, 20, 0, 'Směs humoru a melancholie.', 'Zkoumání paměti a historie.', 'filozofie, paměť, Kundera', 7, 4, 2, 2, 2);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Proces', '2025-01-15', 220, 50, 2, 'Děsivé a surrealistické.', 'Román o byrokracii a spravedlnosti.', 'Kafka, surrealismus, právo', 9, 3, 1, 3, 4);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Na západní frontě klid', '2025-01-16', 300, 0, 0, 'Silný příběh o první světové válce.', 'Hrůzy a přátelství během války.', 'válka, tragédie, lidství', 8, 5, 2, 2, 1);
+
+INSERT INTO Book (title, acquirement_date, total_pages, current_page, total_reads, notes, description, keywords, rating, author_id, publisher_id, reading_state, ownership_state)
+VALUES ('Nesnesitelná lehkost bytí', '2025-01-17', 320, 30, 1, 'Hluboký román o lásce a osudu.', 'Zkoumání smyslu života a volby.', 'filozofie, Kundera, láska', 9, 4, 3, 1, 3);
