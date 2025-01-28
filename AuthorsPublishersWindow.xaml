@@ -72,20 +72,12 @@
                 <DataGridTemplateColumn Header="Upravit" Width="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="EditAuthorButton_Click" Height="30" >
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Image Source="/edit.png" Stretch="Uniform" />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </Button.Style>
+                            <Button Click="EditAuthorButton_Click" 
+                                        BorderThickness="0"
+                                        Width="Auto" >
+                                <StackPanel Width="30" Height="30">
+                                    <Image Source="pack://application:,,,/sources/edit.png" Stretch="Uniform"/>
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
@@ -146,20 +138,12 @@
                 <DataGridTemplateColumn Header="Upravit" Width="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="EditPublisherButton_Click" Height="30" >
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Image Source="/edit.png" Stretch="Uniform" />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </Button.Style>
+                            <Button Click="EditPublisherButton_Click" 
+                                        BorderThickness="0"
+                                        Width="Auto" >
+                                <StackPanel Width="30" Height="30">
+                                    <Image Source="pack://application:,,,/sources/edit.png" Stretch="Uniform"/>
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>

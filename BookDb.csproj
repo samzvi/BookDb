@@ -10,6 +10,14 @@
 
   <ItemGroup>
     <None Remove="edit.png" />
+    <None Remove="sources\edit.png" />
+    <None Remove="sources\trash-can.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="sources\trash-can.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +26,9 @@
 
   <ItemGroup>
     <Resource Include="edit.png" />
+    <Resource Include="sources\edit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>

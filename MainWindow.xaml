@@ -69,23 +69,15 @@
                 <DataGridTextColumn Header="Klíčová slova" Binding="{Binding Keywords}" MinWidth="200" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Popis" Binding="{Binding Description}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
-                <DataGridTemplateColumn Header="Upravit" MinWidth="50">
+                <DataGridTemplateColumn Header="Upravit" MinWidth="50" Width="50">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Click="ShowDetailsButton_Click" BorderThickness="0" Height="30">
-                                <Button.Style>
-                                    <Style TargetType="Button">
-                                        <Setter Property="Background" Value="Transparent" />
-                                        <Setter Property="BorderBrush" Value="Transparent" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="Button">
-                                                    <Image Source="/edit.png" Stretch="Uniform" />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Style>
-                                </Button.Style>
+                            <Button Click="ShowDetailsButton_Click" 
+                                    BorderThickness="0"
+                                    Width="Auto" >
+                                <StackPanel Width="30" Height="30">
+                                    <Image Source="pack://application:,,,/sources/edit.png" Stretch="Uniform"/>
+                                </StackPanel>
                             </Button>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
