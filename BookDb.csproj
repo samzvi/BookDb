@@ -9,24 +9,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
     <None Remove="edit.png" />
-    <None Remove="sources\edit.png" />
-    <None Remove="sources\trash-can.png" />
+    <None Remove="Sources\edit.png" />
+    <None Remove="Sources\library.png" />
+    <None Remove="Sources\trash-can.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="sources\trash-can.png">
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Sources\library.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Sources\trash-can.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="edit.png" />
-    <Resource Include="sources\edit.png">
+    <Resource Include="Sources\edit.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

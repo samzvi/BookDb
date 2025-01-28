@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using BookDb.Models;
 
-namespace BookDb
+namespace BookDb.Classes
 {
     public class Book : INotifyPropertyChanged, IDataErrorInfo
     {
@@ -15,15 +15,15 @@ namespace BookDb
             _validationRules = new Dictionary<string, Func<string?>>
             {
                 { nameof(Title), () => string.IsNullOrWhiteSpace(Title)
-                                    ? "Název nesmí být prázdný"
+                                    ? "🔴 Zadejte název knihy."
                                     : (Title.Length > 255
-                                        ? "Název je moc dlouhý"
+                                        ? "🔴 Název je moc dlouhý"
                                         : null)},
-                { nameof(AuthorId), () => AuthorId is null ? "Vyber autora" : null },
-                { nameof(ReadingState), () => ReadingState is null ? "Vyber stav čtení" : null },
+                { nameof(AuthorId), () => AuthorId is null ? "🔴 Vyber autora" : null },
+                { nameof(ReadingState), () => ReadingState is null ? "🔴 Vyber stav čtení" : null },
                 { nameof(OwnershipState), () => OwnershipState is null ? "Vyber stav vlastnictví" : null },
-                { nameof(TotalPages), () => TotalPages is null ? "Zadej kolik má kniha stran" : null },
-                { nameof(PublisherId), () => PublisherId is null ? "Vyber vydavatele" : null }
+                { nameof(TotalPages), () => TotalPages is null ? "🔴 Počet stran je povinný" : null },
+                { nameof(PublisherId), () => PublisherId is null ? "🔴 Vyber vydavatele" : null }
             };
         }
 

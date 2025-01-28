@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BookDb.AuthorsPublishersWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Správa autorů a vydavatelů" Height="700" Width="500">
+        Title="Správa autorů a vydavatelů" Height="700" MinHeight="600" Width="500" MinWidth="300" Icon="pack://application:,,,/Sources/library.png">
     
     
     <Grid Margin="10">
@@ -76,7 +76,7 @@
                                         BorderThickness="0"
                                         Width="Auto" >
                                 <StackPanel Width="30" Height="30">
-                                    <Image Source="pack://application:,,,/sources/edit.png" Stretch="Uniform"/>
+                                    <Image Source="pack://application:,,,/Sources/edit.png" Stretch="Uniform"/>
                                 </StackPanel>
                             </Button>
                         </DataTemplate>
@@ -142,7 +142,7 @@
                                         BorderThickness="0"
                                         Width="Auto" >
                                 <StackPanel Width="30" Height="30">
-                                    <Image Source="pack://application:,,,/sources/edit.png" Stretch="Uniform"/>
+                                    <Image Source="pack://application:,,,/Sources/edit.png" Stretch="Uniform"/>
                                 </StackPanel>
                             </Button>
                         </DataTemplate>

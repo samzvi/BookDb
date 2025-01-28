@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BookDb.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Moje Knihovna" MinHeight="450" Height="450" MinWidth="1300" Width="1500">
+        Title="Moje Knihovna" MinHeight="450" Height="450" MinWidth="1300" Width="1500" Icon="pack://application:,,,/Sources/library.png">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -15,7 +15,8 @@
             <DataGrid.Resources>
                 <Style x:Key="TextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="Padding" Value="3" />
+                    <Setter Property="Padding" Value="5, 0, 5, 0" />
+                    <Setter Property="Margin" Value="0, 0, 10, 0" />
                 </Style>
                 <Style x:Key="NumTextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
@@ -44,11 +45,11 @@
                 <DataGridTextColumn Header="Název" Binding="{Binding Title}" MinWidth="120" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Autor" Binding="{Binding AuthorName}" MinWidth="150" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Vydavatel" Binding="{Binding PublisherName}" MinWidth="150" ElementStyle="{StaticResource TextBlockStyle}" />
-                <DataGridTextColumn Header="Datum pořízení" Binding="{Binding AcquirementDate}" MinWidth="100" ElementStyle="{StaticResource TextBlockStyle}" />
-                <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding OnPageTotal}" MinWidth="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
-                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TotalReads}" MinWidth="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
-                <DataGridTextColumn Header="Hodnocení" Binding="{Binding Rating}" MinWidth="100" ElementStyle="{StaticResource NumTextBlockStyle}" />
-                <DataGridTextColumn Header="Čtu?" MinWidth="45">
+                <DataGridTextColumn Header="Datum pořízení" Binding="{Binding AcquirementDate}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding OnPageTotal}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
+                <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TotalReads}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
+                <DataGridTextColumn Header="Hodnocení" Binding="{Binding Rating}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
+                <DataGridTextColumn Header="Čtu?" Width="45" CanUserResize="False">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Background" Value="{Binding ReadingColor}" />
@@ -57,7 +58,7 @@
                         </Style>
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
-                <DataGridTextColumn Header="Mám?" MinWidth="45">
+                <DataGridTextColumn Header="Mám?" Width="45" CanUserResize="False">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
                             <Setter Property="Background" Value="{Binding OwnershipColor}" />
@@ -69,14 +70,14 @@
                 <DataGridTextColumn Header="Klíčová slova" Binding="{Binding Keywords}" MinWidth="200" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Popis" Binding="{Binding Description}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
-                <DataGridTemplateColumn Header="Upravit" MinWidth="50" Width="50">
+                <DataGridTemplateColumn Header="Upravit" Width="50" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Click="ShowDetailsButton_Click" 
                                     BorderThickness="0"
                                     Width="Auto" >
                                 <StackPanel Width="30" Height="30">
-                                    <Image Source="pack://application:,,,/sources/edit.png" Stretch="Uniform"/>
+                                    <Image Source="pack://application:,,,/Sources/edit.png" Stretch="Uniform"/>
                                 </StackPanel>
                             </Button>
                         </DataTemplate>

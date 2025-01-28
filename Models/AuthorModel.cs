@@ -1,12 +1,13 @@
 ﻿using System.Text;
 using System.Windows;
+using BookDb.Classes;
 using FirebirdSql.Data.FirebirdClient;
 
 namespace BookDb.Models
 {
     public class AuthorModel
     {
-        private readonly string ConnectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
+        private readonly string? ConnectionString = ConfigHelper.GetConnectionString();
 
         public List<Author> Authors { get; set; }
 

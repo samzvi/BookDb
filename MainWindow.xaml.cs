@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using BookDb.Classes;
 using BookDb.Converters;
 using BookDb.Models;
 
@@ -9,10 +10,9 @@ namespace BookDb
 {
     public partial class MainWindow : Window
     {
-        private readonly string dbPath = @"D:/fbdata/BOOKSDB.fdb";
-        private readonly string dbInitPath = @"..\..\..\db\DbInitialize.bat";
-        private readonly string connectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
-        private BookModel bookModel;
+        private readonly string connectionString = ConfigHelper.GetConnectionString();
+        private readonly string dbPath = ConfigHelper.GetDbPath();
+        private readonly string dbInitPath = ConfigHelper.GetDbInitPath(); private BookModel bookModel;
         private StateModel stateModel;
 
         public MainWindow()

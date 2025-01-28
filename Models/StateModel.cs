@@ -4,13 +4,14 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BookDb.Classes;
 using FirebirdSql.Data.FirebirdClient;
 
 namespace BookDb.Models
 {
     class StateModel
     {
-        private readonly string ConnectionString = "User=SYSDBA;Password=masterkey;Database=D:\\fbdata\\BOOKSDB.fdb;DataSource=localhost;Port=3050;Charset=UTF8;";
+        private readonly string? ConnectionString = ConfigHelper.GetConnectionString();
 
         public List<State> ReadingStates { get; set; }
         public List<State> OwnershipStates { get; set; }

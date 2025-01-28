@@ -1,8 +1,6 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Media;
 using BookDb.Models;
+using BookDb.Classes;
 
 namespace BookDb
 {

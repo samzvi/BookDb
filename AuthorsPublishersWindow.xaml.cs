@@ -1,6 +1,7 @@
 ﻿// AuthorsPublishersWindow.xaml.cs
 using System.Windows;
 using BookDb.Models;
+using BookDb.Classes;
 
 namespace BookDb
 {

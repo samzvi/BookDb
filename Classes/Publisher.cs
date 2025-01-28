@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookDb
+namespace BookDb.Classes
 {
     public class Publisher : IDataErrorInfo, INotifyPropertyChanged
     {
@@ -15,7 +15,7 @@ namespace BookDb
         {
             _validationRules = new Dictionary<string, Func<string?>>
             {
-                { nameof(Name), () => string.IsNullOrWhiteSpace(Name) ? "Nesmí být prázdné" : null }
+                { nameof(Name), () => string.IsNullOrWhiteSpace(Name) ? "🔴 Nesmí být prázdné" : null }
             };
         }
 
