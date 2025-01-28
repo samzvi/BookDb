@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using System;
+using System.IO;
 
 namespace BookDb
 {
@@ -25,7 +25,8 @@ namespace BookDb
 
         public static string GetDbPath()
         {
-            return _configuration["DatabaseSettings:DbPath"];
+            string relativePath = _configuration["DatabaseSettings:DbPath"];
+            return Path.GetFullPath(relativePath, AppDomain.CurrentDomain.BaseDirectory);
         }
 
         public static string GetDbInitPath()

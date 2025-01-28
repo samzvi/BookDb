@@ -21,7 +21,7 @@ namespace BookDb
 
         private readonly string connectionString = ConfigHelper.GetConnectionString();
         private readonly string dbPath = ConfigHelper.GetDbPath();
-        private readonly string dbInitPath = ConfigHelper.GetDbInitPath(); 
+        private readonly string dbInitPath = Path.GetFullPath(ConfigHelper.GetDbInitPath()); 
         
         private BookModel bookModel;
         private StateModel stateModel;
@@ -85,18 +85,26 @@ namespace BookDb
             if (!File.Exists(dbPath))
             {
                 MessageBoxResult result = MessageBox.Show(
-                    "Database není vytvořena, chcete spustit pokus o vytvoření?",
+                    $"Database není vytvořena, chcete spustit pokus o vytvoření?",
                     "Chyba",
                     MessageBoxButton.YesNo,
-                    MessageBoxImage.Error);
+                    MessageBoxImage.Question);
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    Process.Start(dbInitPath);
+                    var processInfo = new ProcessStartInfo
+                    {
+                        FileName = dbInitPath,
+                        UseShellExecute = true,
+                        WindowStyle = ProcessWindowStyle.Minimized,
+                        Verb = "runas" 
+                    };
+
+                    Process.Start(processInfo).WaitForExit();
                 }
                 else
                 {
-                    Application.Current.Shutdown();
+                    Environment.Exit(0);
                 }
             }
         }
