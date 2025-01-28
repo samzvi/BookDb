@@ -47,14 +47,14 @@ CREATE TABLE Book (
 -- Insert predefined ownership states
 INSERT INTO OwnershipState (name, color) VALUES ('Vlastním', '#00ff00');	-- Green
 INSERT INTO OwnershipState (name, color) VALUES ('Nevlastním', '#ff0000');	-- Red
-INSERT INTO OwnershipState (name, color) VALUES ('Půjčeno', '#ffff00');		-- Yellow
-INSERt INTO OwnershipState (name, color) VALUES ('Prodáno', '#ff5f00');		-- Orange
+INSERT INTO OwnershipState (name, color) VALUES ('Půjčeno', '#ff6600');		-- Yellow
+INSERt INTO OwnershipState (name, color) VALUES ('Prodáno', '#ff9600');		-- Orange
 
 -- Insert predefined reading states
 INSERT INTO ReadingState (name, color) VALUES ('Aktivně čtu', '#00ff00');	-- Green
-INSERT INTO ReadingState (name, color) VALUES ('Rozečteno', '#ffff00');		-- Yellow
+INSERT INTO ReadingState (name, color) VALUES ('Rozečteno', '#1ea66f');		-- Cyan
 INSERT INTO ReadingState (name, color) VALUES ('Nechci číst', '#ff0000');	-- Red
-INSERT INTO ReadingState (name, color) VALUES ('Chci přečíst', '#ff5f00');	-- Orange
+INSERT INTO ReadingState (name, color) VALUES ('Chci přečíst', '#ffff00');	-- Yellow
 
 -- Insert predefined publishers
 INSERT INTO Publisher (name) VALUES ('Albatros Media');

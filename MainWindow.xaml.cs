@@ -150,7 +150,7 @@ namespace BookDb
             OnPropertyChanged(nameof(PaginationVisibility));
             OnPropertyChanged(nameof(IsNextButtonEnabled));
             OnPropertyChanged(nameof(IsPreviousButtonEnabled));
-            //BooksDataGrid.ItemsSource = null; // i think its not necessary
+
             BooksDataGrid.ItemsSource = booksWithDetails;
         }
 
@@ -178,14 +178,18 @@ namespace BookDb
 
         private void ShowDetailsButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedRow = BooksDataGrid.SelectedItem;
+            dynamic? selectedRow = (sender as Button)?.CommandParameter;
 
-            int bookId = (int)selectedRow.GetType().GetProperty("Id").GetValue(selectedRow);
+            if (selectedRow is not null)
+            {
+                int bookId = selectedRow.Id;
+                Book? book = bookModel.Books.FirstOrDefault(book => book.Id == bookId);
 
-            var detailsWindow = new BookManagementWindow(connectionString, isEditMode: true, bookModel.Books.FirstOrDefault(book => book.Id == bookId));
-            detailsWindow.ShowDialog();
+                var detailsWindow = new BookManagementWindow(connectionString, isEditMode: true, book);
+                detailsWindow.ShowDialog();
 
-            LoadDefaultView();
+                LoadDefaultView();
+            }
         }
 
 
@@ -211,21 +215,23 @@ namespace BookDb
         {
             var dataGrid = sender as DataGrid;
 
-            if (dataGrid.SelectedCells.Count > 0)
+            if (dataGrid?.SelectedCells.Count > 0)
             {
-                foreach (var cellInfo in dataGrid.SelectedCells)
+                var cellInfo = dataGrid.SelectedCells[0];
+
+                if (cellInfo.Column.Header?.ToString() == "Popis" || cellInfo.Column.Header?.ToString() == "Poznámky")
                 {
-                    if (cellInfo.Column.Header.ToString() == "Popis")
+                    if (cellInfo.Column.GetCellContent(cellInfo.Item) is TextBlock textBlock)
                     {
-                        if (cellInfo.Column.GetCellContent(cellInfo.Item) is TextBlock textBlock)
-                        {
-                            textBlock.TextWrapping = TextWrapping.Wrap;
-                        }
+                        textBlock.TextWrapping = textBlock.TextWrapping == TextWrapping.WrapWithOverflow
+                            ? TextWrapping.NoWrap
+                            : TextWrapping.WrapWithOverflow;
+
+                        dataGrid.SelectedCells.Clear();
                     }
                 }
             }
         }
-
 
     }
 }

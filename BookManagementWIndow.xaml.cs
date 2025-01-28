@@ -11,7 +11,7 @@ namespace BookDb
         private readonly AuthorModel _authorModel = new();
         private readonly PublisherModel _publisherModel = new();
         private readonly StateModel _stateModel = new();
-        private readonly Book _temporaryBook;
+        private Book? _temporaryBook;
 
 
         public BookManagementWindow(string connectionString, bool isEditMode, Book? originalBook = null)
@@ -20,7 +20,15 @@ namespace BookDb
 
             _isEditMode = isEditMode;
 
-            if (_isEditMode && originalBook != null)
+            
+            
+            LoadComponents(originalBook);
+        }
+
+
+        private void LoadComponents(Book? originalBook)
+        {
+            if (_isEditMode)
             {
                 _temporaryBook = new Book
                 {
@@ -58,13 +66,9 @@ namespace BookDb
 
             }
 
+            IsRatedCheckBox.IsChecked = _temporaryBook.Rating is null ? false : true;
             IsRatedHelper();
-            LoadComboBoxes();
-        }
 
-
-        private void LoadComboBoxes()
-        {
             AuthorComboBox.ItemsSource = _authorModel.Authors;
             PublisherComboBox.ItemsSource = _publisherModel.Publishers;
             OwnershipStateComboBox.ItemsSource = _stateModel.OwnershipStates;
@@ -79,6 +83,8 @@ namespace BookDb
             {
                 BookModel bookModel = new();
                 bool saveSuccess;
+
+                _temporaryBook.Rating = IsRatedCheckBox.IsChecked is true ? _temporaryBook.Rating : null;
 
                 if (_isEditMode)
                     saveSuccess = bookModel.UpdateBook(_temporaryBook);
@@ -166,15 +172,7 @@ namespace BookDb
 
         private void IsRatedHelper()
         {
-            if (IsRatedCheckBox.IsChecked == true || _temporaryBook.Rating is not null)
-            {
-                RatingSlider.IsEnabled = true;
-            }
-            else
-            {
-                RatingSlider.IsEnabled = false;
-                _temporaryBook.Rating = null;
-            }
+            RatingSlider.IsEnabled = IsRatedCheckBox.IsChecked is true ? true : false;
         }
 
         private void NumericOnly_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)

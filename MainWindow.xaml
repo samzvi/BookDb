@@ -21,22 +21,29 @@
                   Margin="5" 
                   IsReadOnly="True"
                   SelectedCellsChanged="CellFocused"
-                  SelectionMode="Single">
+                  SelectionMode="Single"
+                  SelectionUnit="Cell">
             <DataGrid.Resources>
                 <Style x:Key="TextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
-                    <Setter Property="Padding" Value="5, 0, 5, 0" />
+                    <Setter Property="Padding" Value="5" />
                     <Setter Property="Margin" Value="0, 0, 10, 0" />
                 </Style>
+                
                 <Style x:Key="NumTextBlockStyle" TargetType="TextBlock">
                     <Setter Property="VerticalAlignment" Value="Center" />
                     <Setter Property="TextAlignment" Value="Center" />
                 </Style>
 
-
                 <Style TargetType="DataGridCell">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                     <Style.Triggers>
                         <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="Black" />
+                            <Setter Property="BorderBrush" Value="Transparent" />
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
                             <Setter Property="Background" Value="Transparent" />
                             <Setter Property="Foreground" Value="Black" />
                             <Setter Property="BorderBrush" Value="Transparent" />
@@ -58,7 +65,7 @@
                 <DataGridTextColumn Header="Datum pořízení" Binding="{Binding AcquirementDate}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Aktuální stránka" Binding="{Binding OnPageTotal}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
                 <DataGridTextColumn Header="Počet přečtení" Binding="{Binding TotalReads}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
-                <DataGridTextColumn Header="Hodnocení" Binding="{Binding Rating}" Width="Auto" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
+                <DataGridTextColumn Header="Hodnocení" Binding="{Binding Rating}" Width="90" CanUserResize="False" ElementStyle="{StaticResource NumTextBlockStyle}" />
                 <DataGridTextColumn Header="Čtu?" Width="45" CanUserResize="False">
                     <DataGridTextColumn.CellStyle>
                         <Style TargetType="DataGridCell">
@@ -78,13 +85,14 @@
                     </DataGridTextColumn.CellStyle>
                 </DataGridTextColumn>
                 <DataGridTextColumn Header="Klíčová slova" Binding="{Binding Keywords}" MinWidth="200" ElementStyle="{StaticResource TextBlockStyle}" />
-                <DataGridTextColumn Header="Popis" TextOptions.TextFormattingMode="Ideal" Binding="{Binding Description}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
+                <DataGridTextColumn Header="Popis" Binding="{Binding Description}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTextColumn Header="Poznámky" Binding="{Binding Notes}" Width="*" ElementStyle="{StaticResource TextBlockStyle}" />
                 <DataGridTemplateColumn Header="Upravit" Width="50" CanUserResize="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Click="ShowDetailsButton_Click" 
                                     BorderThickness="0"
+                                    CommandParameter="{Binding}"
                                     Width="Auto" >
                                 <StackPanel Width="30" Height="30">
                                     <Image Source="pack://application:,,,/Sources/edit.png" Stretch="Uniform"/>
