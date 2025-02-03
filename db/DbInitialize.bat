@@ -28,4 +28,3 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Database initialization complete.
-pause
