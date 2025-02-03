@@ -11,11 +11,13 @@ namespace BookDb.Models
 
         public List<Author> Authors { get; set; }
 
+
         public AuthorModel()
         {
             Authors = new List<Author>();
             FetchAuthors();
         }
+
 
         public void FetchAuthors()
         {
@@ -43,6 +45,7 @@ namespace BookDb.Models
             }
         }
 
+
         public bool Add(Author author)
         {
             try
@@ -64,6 +67,7 @@ namespace BookDb.Models
             }
             catch { return false; }
         }
+
 
         public bool Update(Author author)
         {
@@ -89,6 +93,7 @@ namespace BookDb.Models
             }
             catch { return false; }
         }
+
 
         public bool? Delete(int? authorId)
         {

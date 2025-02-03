@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using FirebirdSql.Data.FirebirdClient;
-using System.Windows;
 using BookDb.Classes;
 
 namespace BookDb.Models
@@ -11,12 +10,14 @@ namespace BookDb.Models
 
         public List<Book> Books { get; set; }
 
+
         public BookModel()
         {
             Books = new List<Book>();
 
             FetchBooks();
         }
+
 
         public void FetchBooks()
         {
@@ -56,6 +57,7 @@ namespace BookDb.Models
             }
         }
 
+
         public bool AddNewBook(Book newBook)
         {
             try
@@ -90,6 +92,7 @@ namespace BookDb.Models
             }
             catch { return false; }
         }
+
 
         public bool UpdateBook(Book updatedBook)
         {
@@ -159,6 +162,5 @@ namespace BookDb.Models
             }
             catch { return false; }
         }
-
     }
 }

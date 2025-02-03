@@ -3,6 +3,7 @@ using System.IO;
 
 namespace BookDb
 {
+    // class for db config saved in appsettings.json
     public static class ConfigHelper
     {
         private static IConfigurationRoot _configuration;

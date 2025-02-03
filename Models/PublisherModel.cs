@@ -1,8 +1,4 @@
-﻿// PublisherModel.cs
-using System.Data;
-using FirebirdSql.Data.FirebirdClient;
-using System.Collections.Generic;
-using System.Net;
+﻿using FirebirdSql.Data.FirebirdClient;
 using System.Text;
 using System.Windows;
 using BookDb.Classes;
@@ -15,11 +11,13 @@ namespace BookDb.Models
 
         public List<Publisher> Publishers { get; set; }
 
+
         public PublisherModel()
         {
             Publishers = new List<Publisher>();
             FetchPublishers();
         }
+
 
         public void FetchPublishers()
         {
@@ -46,6 +44,7 @@ namespace BookDb.Models
             }
         }
 
+
         public bool Add(Publisher? publisher)
         {
             try
@@ -65,6 +64,7 @@ namespace BookDb.Models
             }
             catch { return false; }
         }
+
 
         public bool Update(Publisher? publisher)
         {

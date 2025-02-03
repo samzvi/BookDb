@@ -5,7 +5,6 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using BookDb.Classes;
-using BookDb.Converters;
 using BookDb.Models;
 
 namespace BookDb
@@ -109,7 +108,7 @@ namespace BookDb
             }
         }
 
-
+        // loads main window view with pagination
         public void LoadDefaultView()
         {
             bookModel.FetchBooks();
@@ -119,6 +118,7 @@ namespace BookDb
             if (CurrentPage > totalPages && totalPages > 0)
                 CurrentPage = totalPages;
 
+            // creates a projection of Book class (prep to fill datagrid)
             var booksWithDetails = bookModel.Books.Select(book => new
             {
                 book.Id,
@@ -211,6 +211,7 @@ namespace BookDb
             }
         }
 
+        // for extending line height on columns Popis and Poznamky when clicked on
         private void CellFocused(object sender, SelectedCellsChangedEventArgs e)
         {
             var dataGrid = sender as DataGrid;

@@ -1,5 +1,4 @@
-﻿// EditAuthorPublisherWindow.xaml.cs
-using System.Windows;
+﻿using System.Windows;
 using BookDb.Models;
 using BookDb.Classes;
 
@@ -11,6 +10,7 @@ namespace BookDb
         private Publisher? _temporaryPublisher;
         private readonly bool _isEditMode;
         private bool _isAuthor;
+
 
         public EditAuthorPublisherWindow(bool isEditMode, Author? originalAuthor = null, Publisher? originalPublisher = null)
         {
@@ -42,6 +42,7 @@ namespace BookDb
             SetEditElements();
         }
 
+        // changes window to be either for editing or creating
         private void SetEditElements()
         {
             DeleteButton.Visibility = _isEditMode ? Visibility.Visible : Visibility.Collapsed;
@@ -60,6 +61,7 @@ namespace BookDb
                 TitleLabel.Content = _isEditMode ? "Upravit vydavatele" : "Nový vydavatel";
             }
         }
+
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {

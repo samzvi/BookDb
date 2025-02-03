@@ -1,8 +1,10 @@
 @echo off
 SET DB_PATH=%~dp0BooksDb.fdb
 SET SQL_FILE="%~dp0DbInit.sql"
+SET FIREBIRD_BIN="C:\fb"
 SET USERNAME=SYSDBA
 SET PASSWORD=masterkey
+cd %FIREBIRD_BIN%
 
 if not exist "%DB_PATH%" (
     REM Create the database using isql
@@ -26,3 +28,4 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 echo Database initialization complete.
+pause

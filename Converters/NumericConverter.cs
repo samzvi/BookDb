@@ -4,6 +4,7 @@ using System.Windows.Data;
 
 namespace BookDb.Converters
 {
+    // class for not letting user type anything else than numbers to numeric fields
     public class NumericConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
